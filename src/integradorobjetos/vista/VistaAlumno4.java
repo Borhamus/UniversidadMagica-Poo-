@@ -4,6 +4,10 @@
  */
 package integradorobjetos.vista;
 
+import java.awt.BorderLayout;
+import javax.swing.JComponent;
+import javax.swing.JLayer;
+
 /**
  *
  * @author Borhamus
@@ -15,6 +19,7 @@ public class VistaAlumno4 extends javax.swing.JPanel {
      */
     public VistaAlumno4() {
         initComponents();
+        Fondo.setOpaque(false);
         
         // Establecer dimensiones exactas
         setMaximumSize(new java.awt.Dimension(846, 398));
@@ -26,7 +31,11 @@ public class VistaAlumno4 extends javax.swing.JPanel {
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
         Fondo.setPreferredSize(new java.awt.Dimension(846, 398));
         
-        
+        //Estilo estrellado
+        JLayer<JComponent> capaEstrellada = Style.aplicarFondoEstrellado(Fondo, 1, 30);
+        setLayout(new BorderLayout());
+        remove(Fondo);
+        add(capaEstrellada, BorderLayout.CENTER);
     }
 
     /**

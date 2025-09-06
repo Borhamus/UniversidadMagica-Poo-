@@ -4,7 +4,7 @@
  */
 package integradorobjetos.vista;
 
-import static integradorobjetos.vista.Style.crearPanelEstrellado;
+import static integradorobjetos.vista.Style.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,6 +27,7 @@ public class Noticias extends javax.swing.JPanel {
     
     public Noticias() {
         initComponents();
+        Fondo.setOpaque(false);
         
         // Establecer dimensiones exactas
         setMaximumSize(new java.awt.Dimension(846, 398));
@@ -38,7 +39,11 @@ public class Noticias extends javax.swing.JPanel {
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
         Fondo.setPreferredSize(new java.awt.Dimension(846, 398));
         
-        aplicarFondoEstrellado();
+        JLayer<JComponent> capaEstrellada = Style.aplicarFondoEstrellado(Fondo, 1, 30);
+        setLayout(new BorderLayout());
+        remove(Fondo);
+        add(capaEstrellada, BorderLayout.CENTER);
+        
         configurarPaneles();
         cargarImagenesYTextos();
         configurarCarrusel();
@@ -132,10 +137,10 @@ public class Noticias extends javax.swing.JPanel {
         
         // Cargar imágenes
         try {
-            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Ghroth.jpeg")));
-            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Undercity.jpeg")));
-            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Elf.jpeg")));
-            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Elf2.jpeg")));
+            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Ghroth.jpg")));
+            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Undercity.jpg")));
+            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Elf.jpg")));
+            imagenes.add(new ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Elf2.jpg")));
         } catch (Exception e) {
             System.err.println("Error al cargar las imágenes: " + e.getMessage());
             // Si no se pueden cargar las imágenes, mostrar texto alternativo
@@ -366,25 +371,29 @@ public class Noticias extends javax.swing.JPanel {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(Fotos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PanelNoticia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Pasadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(45, 45, 45))
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                        .addComponent(PanelNoticia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45))
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addGap(211, 211, 211)
+                        .addComponent(Pasadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         FondoLayout.setVerticalGroup(
             FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(FondoLayout.createSequentialGroup()
-                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addComponent(Fotos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addGap(122, 122, 122)
-                        .addComponent(PanelNoticia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addComponent(Pasadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                        .addComponent(PanelNoticia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Pasadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

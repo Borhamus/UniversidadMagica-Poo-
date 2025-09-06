@@ -15,24 +15,13 @@ public class App extends javax.swing.JFrame {
 
     public App() {
     initComponents();
-    
-    // Establecer título y tamaño exacto de la ventana
-    setTitle("Universidad Mística Arcana");
-    setSize(846, 518); // Dimensiones exactas: 846x518
     setLocationRelativeTo(null);
     setResizable(false); // Evitar que el usuario cambie el tamaño
-    
-    // Aplicar estilos a la ventana principal
-    Style.estiloFrame(this);
-    Style.estiloPanel(Fondo, NavBar, Content);
-    
-    // Aplicar estilos a los botones
-    Style.estiloBotonHome(Home);
-    Style.estiloBoton(Alumnos, Carreras, PlanDeEstudios);
     
     // Mostrar la vista inicial (vista de noticias)
     Noticias vistaNoticias = new Noticias();
     cambiarVista(vistaNoticias);
+    
 }
 
 private void cambiarVista(JPanel nuevaVista) {
@@ -40,8 +29,12 @@ private void cambiarVista(JPanel nuevaVista) {
     // La vista ya tiene sus dimensiones establecidas en su constructor
     
     // Limpiar el panel Content
+    Fondo.setSize(850, 520);
+    Fondo.setLocation(0,0);
     Content.removeAll();
+    
     Content.setLayout(new BorderLayout());
+    
     
     // Agregar la nueva vista - usará su tamaño preferido
     Content.add(nuevaVista, BorderLayout.CENTER);
@@ -75,6 +68,7 @@ private void cambiarVista(JPanel nuevaVista) {
         setMaximumSize(new java.awt.Dimension(846, 518));
         setMinimumSize(new java.awt.Dimension(846, 518));
 
+        Fondo.setBackground(new java.awt.Color(0, 0, 102));
         Fondo.setMaximumSize(new java.awt.Dimension(846, 518));
         Fondo.setMinimumSize(new java.awt.Dimension(846, 518));
         Fondo.setPreferredSize(new java.awt.Dimension(846, 518));
@@ -82,7 +76,17 @@ private void cambiarVista(JPanel nuevaVista) {
         NavBar.setBackground(new java.awt.Color(0, 0, 102));
         NavBar.setMaximumSize(new java.awt.Dimension(846, 120));
         NavBar.setMinimumSize(new java.awt.Dimension(846, 120));
+        NavBar.setPreferredSize(new java.awt.Dimension(846, 120));
 
+        Home.setBackground(new java.awt.Color(0, 0, 0));
+        Home.setForeground(new java.awt.Color(0, 0, 0));
+        Home.setIcon(new javax.swing.ImageIcon(getClass().getResource("/integradorobjetos/vista/Img/Menu.jpg"))); // NOI18N
+        Home.setBorderPainted(false);
+        Home.setContentAreaFilled(false);
+        Home.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        Home.setDefaultCapable(false);
+        Home.setFocusPainted(false);
+        Home.setRequestFocusEnabled(false);
         Home.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 HomeActionPerformed(evt);
@@ -92,6 +96,7 @@ private void cambiarVista(JPanel nuevaVista) {
         Alumnos.setBackground(new java.awt.Color(51, 0, 204));
         Alumnos.setForeground(new java.awt.Color(255, 255, 0));
         Alumnos.setText("Alumnos");
+        Alumnos.setFocusable(false);
         Alumnos.setMaximumSize(new java.awt.Dimension(80, 20));
         Alumnos.setMinimumSize(new java.awt.Dimension(80, 20));
         Alumnos.setPreferredSize(new java.awt.Dimension(80, 20));
@@ -104,6 +109,7 @@ private void cambiarVista(JPanel nuevaVista) {
         Carreras.setBackground(new java.awt.Color(51, 0, 204));
         Carreras.setForeground(new java.awt.Color(255, 255, 0));
         Carreras.setText("Carreras");
+        Carreras.setFocusable(false);
         Carreras.setMaximumSize(new java.awt.Dimension(80, 20));
         Carreras.setMinimumSize(new java.awt.Dimension(80, 20));
         Carreras.setPreferredSize(new java.awt.Dimension(80, 20));
@@ -116,6 +122,7 @@ private void cambiarVista(JPanel nuevaVista) {
         PlanDeEstudios.setBackground(new java.awt.Color(51, 0, 204));
         PlanDeEstudios.setForeground(new java.awt.Color(255, 255, 0));
         PlanDeEstudios.setText("Plan de Estudios");
+        PlanDeEstudios.setFocusable(false);
         PlanDeEstudios.setMaximumSize(new java.awt.Dimension(80, 20));
         PlanDeEstudios.setMinimumSize(new java.awt.Dimension(80, 20));
         PlanDeEstudios.setPreferredSize(new java.awt.Dimension(80, 20));
@@ -129,35 +136,33 @@ private void cambiarVista(JPanel nuevaVista) {
         NavBar.setLayout(NavBarLayout);
         NavBarLayout.setHorizontalGroup(
             NavBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(NavBarLayout.createSequentialGroup()
-                .addContainerGap(142, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NavBarLayout.createSequentialGroup()
+                .addContainerGap(174, Short.MAX_VALUE)
                 .addComponent(Alumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(Carreras, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(PlanDeEstudios, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(121, 121, 121)
-                .addComponent(Home, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addComponent(Home)
+                .addGap(26, 26, 26))
         );
         NavBarLayout.setVerticalGroup(
             NavBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(NavBarLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(31, Short.MAX_VALUE)
                 .addGroup(NavBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(NavBarLayout.createSequentialGroup()
-                        .addComponent(Home, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NavBarLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(NavBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(Alumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(NavBarLayout.createSequentialGroup()
-                                .addGroup(NavBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(Carreras, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(PlanDeEstudios, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(1, 1, 1)))
-                        .addGap(32, 32, 32))))
+                            .addComponent(Carreras, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(PlanDeEstudios, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(1, 1, 1))
+                    .addComponent(Alumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NavBarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(Home, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         Content.setMaximumSize(new java.awt.Dimension(846, 398));
@@ -187,7 +192,8 @@ private void cambiarVista(JPanel nuevaVista) {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addComponent(NavBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Content, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(Content, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
