@@ -14,18 +14,20 @@ import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author Borhamus
  */
 public class VistaAlumno1 extends javax.swing.JPanel {
-
+    private AlumnoTableModel modeloTabla; // Declaración de la variable
+    
     /**
      * Creates new form VistaAlumno1
      */
@@ -42,10 +44,6 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
         Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
-
-        
-
-        
         
         Fondo.setOpaque(false);
         
@@ -67,99 +65,127 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         // Inicializar componentes con datos del modelo
         inicializarComponentes();
         actualizarTabla();
-        
-        
     }
     
     private void inicializarComponentes() {
-    // Configurar modelo de tabla
-    DefaultTableModel modeloTabla = new DefaultTableModel();
-    modeloTabla.addColumn("Nombre");
-    modeloTabla.addColumn("DNI");
-    modeloTabla.addColumn("Carrera");
-    modeloTabla.addColumn("Estado");
-    TablaContenido.setModel(modeloTabla);
-    
-    // Cargar opciones especiales y carreras en el combo
-    Facultad facultad = Facultad.getInstance();
-    DefaultComboBoxModel<String> modeloCombo = new DefaultComboBoxModel<>();
-    
-    // Agregar opciones especiales al principio
-    modeloCombo.addElement("Todos");
-    modeloCombo.addElement("En ninguna carrera");
-    
-    // Agregar carreras después de las opciones especiales
-    for (Carrera carrera : facultad.getCarreras()) {
-        modeloCombo.addElement(carrera.getNombre());
+        // Crear el modelo de tabla personalizado
+        Facultad facultad = Facultad.getInstance();
+        modeloTabla = new AlumnoTableModel(facultad.getAlumnos()); // Inicialización aquí
+        TablaContenido.setModel(modeloTabla);
+        
+        // Cargar opciones especiales y carreras en el combo
+        DefaultComboBoxModel<String> modeloCombo = new DefaultComboBoxModel<>();
+        
+        // Agregar opciones especiales al principio
+        modeloCombo.addElement("Todos");
+        modeloCombo.addElement("En ninguna carrera");
+        
+        // Agregar carreras después de las opciones especiales
+        for (Carrera carrera : facultad.getCarreras()) {
+            modeloCombo.addElement(carrera.getNombre());
+        }
+        
+        BarraDeCarreras.setModel(modeloCombo);
+        
+        // Agregar listener para actualizar tabla al cambiar selección
+        BarraDeCarreras.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    actualizarTabla();
+                }
+            }
+        });
+        
+        // Seleccionar "Todos" por defecto
+        if (modeloCombo.getSize() > 0) {
+            BarraDeCarreras.setSelectedIndex(0);
+        }
     }
     
-    BarraDeCarreras.setModel(modeloCombo);
-    
-    // Agregar listener para actualizar tabla al cambiar selección
-    BarraDeCarreras.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                actualizarTabla();
+    private void actualizarTabla() {
+        String seleccion = (String) BarraDeCarreras.getSelectedItem();
+        if (seleccion == null) return;
+        
+        Facultad facultad = Facultad.getInstance();
+        List<Alumno> alumnosFiltrados = new ArrayList<>();
+        
+        for (Alumno alumno : facultad.getAlumnos()) {
+            boolean agregarAlumno = false;
+            
+            if (seleccion.equals("Todos")) {
+                agregarAlumno = true;
+            } 
+            else if (seleccion.equals("En ninguna carrera") && alumno.getCarreraInscripta() == null) {
+                agregarAlumno = true;
+            } 
+            else if (alumno.getCarreraInscripta() != null && 
+                     alumno.getCarreraInscripta().getNombre().equals(seleccion)) {
+                agregarAlumno = true;
+            }
+            
+            if (agregarAlumno) {
+                alumnosFiltrados.add(alumno);
             }
         }
-    });
-    
-    // Seleccionar "Todos" por defecto
-    if (modeloCombo.getSize() > 0) {
-        BarraDeCarreras.setSelectedIndex(0);
+        
+        modeloTabla.actualizarDatos(alumnosFiltrados);
     }
-}
-
-private void actualizarTabla() {
-    String seleccion = (String) BarraDeCarreras.getSelectedItem();
-    if (seleccion == null) return;
     
-    Facultad facultad = Facultad.getInstance();
-    List<Alumno> alumnos = facultad.getAlumnos();
-    DefaultTableModel modelo = (DefaultTableModel) TablaContenido.getModel();
-    modelo.setRowCount(0); // Limpiar tabla
-    
-    for (Alumno alumno : alumnos) {
-        String nombreCarrera = "";
-        String estado = "";
+    class AlumnoTableModel extends AbstractTableModel {
+        private List<Alumno> alumnos;
+        private String[] columnNames = {"Nombre", "DNI", "Carrera", "Estado"};
         
-        // Determinar la carrera y estado del alumno
-        if (alumno.getCarreraInscripta() != null) {
-            nombreCarrera = alumno.getCarreraInscripta().getNombre();
-            estado = "Inscripto";
-        } else {
-            nombreCarrera = "Ninguna";
-            estado = "Sin carrera";
+        public AlumnoTableModel(List<Alumno> alumnos) {
+            this.alumnos = new ArrayList<>(alumnos);
         }
         
-        // Filtrar según la selección del combo
-        boolean agregarAlumno = false;
-        
-        if (seleccion.equals("Todos")) {
-            agregarAlumno = true;
-        } 
-        else if (seleccion.equals("En ninguna carrera") && alumno.getCarreraInscripta() == null) {
-            agregarAlumno = true;
-        } 
-        else if (alumno.getCarreraInscripta() != null && 
-                 alumno.getCarreraInscripta().getNombre().equals(seleccion)) {
-            agregarAlumno = true;
+        @Override
+        public int getRowCount() {
+            return alumnos.size();
         }
         
-        // Agregar fila si cumple el filtro
-        if (agregarAlumno) {
-            Object[] fila = {
-                alumno.getNombre(),
-                alumno.getDni(),
-                nombreCarrera,
-                estado
-            };
-            modelo.addRow(fila);
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+        
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            Alumno alumno = alumnos.get(rowIndex);
+            switch (columnIndex) {
+                case 0: return alumno.getNombre();
+                case 1: return alumno.getDni();
+                case 2: 
+                    if (alumno.getCarreraInscripta() != null) {
+                        return alumno.getCarreraInscripta().getNombre();
+                    } else {
+                        return "Ninguna";
+                    }
+                case 3:
+                    if (alumno.getCarreraInscripta() != null) {
+                        return "Inscripto";
+                    } else {
+                        return "Sin carrera";
+                    }
+                default: return null;
+            }
+        }
+        
+        @Override
+        public String getColumnName(int column) {
+            return columnNames[column];
+        }
+        
+        public Alumno getAlumnoAt(int rowIndex) {
+            return alumnos.get(rowIndex);
+        }
+        
+        public void actualizarDatos(List<Alumno> nuevosAlumnos) {
+            this.alumnos = new ArrayList<>(nuevosAlumnos);
+            fireTableDataChanged();
         }
     }
-}
-
     
     
     /**
@@ -293,7 +319,42 @@ private void actualizarTabla() {
     }//GEN-LAST:event_CrearAlumnoBotonActionPerformed
 
     private void EliminarAlumnoBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarAlumnoBotonActionPerformed
-        // TODO add your handling code here:
+        int filaSeleccionada = TablaContenido.getSelectedRow();
+        
+        if (filaSeleccionada >= 0) {
+            // Obtener el objeto Alumno directamente del modelo
+            Alumno alumno = modeloTabla.getAlumnoAt(filaSeleccionada);
+            
+            // Confirmación antes de eliminar
+            int confirmacion = JOptionPane.showConfirmDialog(
+                this, 
+                "¿Está seguro que desea eliminar al alumno " + alumno.getNombre() + "?", 
+                "Confirmar eliminación", 
+                JOptionPane.YES_NO_OPTION);
+            
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                Facultad facultad = Facultad.getInstance();
+                boolean eliminado = facultad.eliminarAlumno(alumno);
+                
+                if (eliminado) {
+                    actualizarTabla();
+                    JOptionPane.showMessageDialog(this, 
+                        "Alumno eliminado correctamente", 
+                        "Eliminación exitosa", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, 
+                        "No se pudo eliminar el alumno", 
+                        "Error al eliminar", 
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                "Por favor seleccione un alumno para eliminar", 
+                "Selección requerida", 
+                JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_EliminarAlumnoBotonActionPerformed
 
 

@@ -1,14 +1,10 @@
 package integradorobjetos.modelo;
-
 import java.util.*;
 
 /**
  *
  * @author Borhamus
  */
-import java.util.ArrayList;
-import java.util.List;
-
 public class Facultad {
     private static Facultad instancia;
     private String nombre;
@@ -25,6 +21,13 @@ public class Facultad {
             instancia = new Facultad();
         }
         return instancia;
+    }
+    
+    public boolean eliminarAlumno(Alumno alumno) {
+        if (alumno != null) {
+            return alumnos.remove(alumno);
+        }
+        return false;
     }
     
     public String getNombre() {
@@ -63,6 +66,29 @@ public class Facultad {
             }
         }
         return null;
+    }
+    
+    // Nuevo método: buscar alumno por DNI
+    public Alumno buscarAlumnoPorDni(String dni) {
+        if (dni == null || dni.isEmpty()) {
+            return null;
+        }
+        
+        for (Alumno alumno : alumnos) {
+            if (alumno.getDni() != null && alumno.getDni().equals(dni)) {
+                return alumno;
+            }
+        }
+        return null;
+    }
+    
+    // Nuevo método: eliminar alumno por DNI
+    public boolean eliminarAlumnoPorDni(String dni) {
+        Alumno alumno = buscarAlumnoPorDni(dni);
+        if (alumno != null) {
+            return alumnos.remove(alumno);
+        }
+        return false;
     }
     
     public Carrera buscarCarrera(String nombre) {

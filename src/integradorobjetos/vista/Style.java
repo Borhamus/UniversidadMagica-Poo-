@@ -5,8 +5,18 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.LayerUI;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Style {
     // Paleta de colores mágicos
@@ -29,6 +39,195 @@ public class Style {
     // Método para crear el ojo mágico
     public static OjoMagico crearOjoMagico() {
         return new OjoMagico();
+    }
+    
+    // Método para aplicar estilo mágico a los botones
+    public static void estiloBotonMagico(JButton boton) {
+        // Fuente mágica
+        boton.setFont(FUENTE_NORMAL);
+        
+        // Colores base
+        boton.setBackground(COLOR_AZUL_MAGICO);
+        boton.setForeground(COLOR_TEXTO);
+        boton.setFocusPainted(false);
+        
+        // Borde mágico con brillo
+        Border bordeMagico = BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(COLOR_DORADO, 2),
+            BorderFactory.createEmptyBorder(8, 20, 8, 20)
+        );
+        boton.setBorder(bordeMagico);
+        
+        // Efecto de brillo mágico al pasar el mouse
+        boton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                // Animación de brillo
+                Timer timer = new Timer(30, new ActionListener() {
+                    float alpha = 0.3f;
+                    
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        alpha += 0.05f;
+                        if (alpha >= 1.0f) {
+                            ((Timer)e.getSource()).stop();
+                            alpha = 1.0f; // Asegurar que no exceda 1.0
+                        }
+                        
+                        // Asegurar que el valor alfa esté en el rango [0, 255]
+                        int alphaValue = Math.min(255, Math.max(0, (int)(alpha * 255)));
+                        
+                        boton.setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createLineBorder(new Color(
+                                COLOR_DORADO.getRed(),
+                                COLOR_DORADO.getGreen(),
+                                COLOR_DORADO.getBlue(),
+                                alphaValue
+                            ), 3),
+                            BorderFactory.createEmptyBorder(8, 20, 8, 20)
+                        ));
+                    }
+                });
+                timer.start();
+                
+                boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            public void mouseExited(MouseEvent evt) {
+                // Restaurar borde normal
+                boton.setBorder(bordeMagico);
+                boton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+        
+        // Efecto de magia al presionar
+        boton.getModel().addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (boton.getModel().isPressed()) {
+                    // Efecto de pulsación mágica
+                    boton.setBackground(COLOR_DORADO);
+                    boton.setForeground(COLOR_FONDO);
+                    
+                    // Crear partículas mágicas
+                    crearParticulasMagicas(boton);
+                } else if (boton.getModel().isRollover()) {
+                    boton.setBackground(COLOR_AZUL_MAGICO);
+                    boton.setForeground(COLOR_TEXTO);
+                } else {
+                    boton.setBackground(COLOR_AZUL_MAGICO);
+                    boton.setForeground(COLOR_TEXTO);
+                }
+            }
+        });
+        
+        // Efecto de resplandor constante (simplificado para evitar errores)
+        boton.addHierarchyListener(new HierarchyListener() {
+            @Override
+            public void hierarchyChanged(HierarchyEvent e) {
+                if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && boton.isShowing()) {
+                    Timer glowTimer = new Timer(100, new ActionListener() {
+                        float glow = 0.5f;
+                        boolean increasing = true;
+                        
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (increasing) {
+                                glow += 0.02f;
+                                if (glow >= 1.0f) {
+                                    glow = 1.0f; // Asegurar que no exceda 1.0
+                                    increasing = false;
+                                }
+                            } else {
+                                glow -= 0.02f;
+                                if (glow <= 0.5f) {
+                                    glow = 0.5f; // Asegurar que no baje de 0.5
+                                    increasing = true;
+                                }
+                            }
+                            
+                            // Asegurar que el valor alfa esté en el rango [0, 255]
+                            int glowValue = Math.min(255, Math.max(0, (int)(glow * 255)));
+                            
+                            boton.setBorder(BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(new Color(
+                                    COLOR_DORADO.getRed(),
+                                    COLOR_DORADO.getGreen(),
+                                    COLOR_DORADO.getBlue(),
+                                    glowValue
+                                ), 2),
+                                BorderFactory.createEmptyBorder(8, 20, 8, 20)
+                            ));
+                        }
+                    });
+                    glowTimer.start();
+                }
+            }
+        });
+    }
+    
+    // Método para crear partículas mágicas al hacer clic
+    private static void crearParticulasMagicas(JComponent componente) {
+        Timer particleTimer = new Timer(30, new ActionListener() {
+            int count = 0;
+            final int maxParticles = 5;
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (count >= maxParticles) {
+                    ((Timer)e.getSource()).stop();
+                    return;
+                }
+                
+                // Crear una partícula mágica
+                JLabel particle = new JLabel("✦");
+                particle.setForeground(COLOR_DORADO);
+                particle.setFont(new Font("Serif", Font.BOLD, 12 + new Random().nextInt(8)));
+                
+                // Posición aleatoria dentro del botón
+                int x = new Random().nextInt(componente.getWidth() - 20);
+                int y = new Random().nextInt(componente.getHeight() - 20);
+                particle.setBounds(x, y, 20, 20);
+                
+                componente.add(particle);
+                componente.repaint();
+                
+                // Animación de la partícula
+                Timer animTimer = new Timer(50, new ActionListener() {
+                    int life = 0;
+                    final int maxLife = 5;
+                    
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        life++;
+                        if (life >= maxLife) {
+                            ((Timer)e.getSource()).stop();
+                            componente.remove(particle);
+                            componente.repaint();
+                            return;
+                        }
+                        
+                        // Movimiento y desvanecimiento
+                        int dx = (new Random().nextInt(3) - 1) * 2;
+                        int dy = (new Random().nextInt(3) - 1) * 2;
+                        particle.setLocation(particle.getX() + dx, particle.getY() + dy);
+                        
+                        // Calcular el valor alfa y asegurar que esté en el rango [0, 255]
+                        float alpha = 1.0f - (float)life / maxLife;
+                        int alphaValue = Math.min(255, Math.max(0, (int)(alpha * 255)));
+                        
+                        particle.setForeground(new Color(
+                            COLOR_DORADO.getRed(),
+                            COLOR_DORADO.getGreen(),
+                            COLOR_DORADO.getBlue(),
+                            alphaValue
+                        ));
+                    }
+                });
+                animTimer.start();
+                
+                count++;
+            }
+        });
+        particleTimer.start();
     }
     
     public static JLayer<JComponent> aplicarFondoEstrellado(JComponent panelExistente, int velocidadPx, int delayMs) {

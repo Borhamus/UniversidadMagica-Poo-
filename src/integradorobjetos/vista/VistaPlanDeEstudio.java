@@ -59,7 +59,7 @@ public class VistaPlanDeEstudio extends javax.swing.JPanel {
         Fondo.setMaximumSize(new java.awt.Dimension(846, 398));
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
 
-        Ojo.setBackground(new java.awt.Color(0, 102, 102));
+        Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);

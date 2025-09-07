@@ -120,7 +120,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
 
         jButton2.setText("Inscribir a Materias");
 
-        Ojo.setBackground(new java.awt.Color(0, 102, 102));
+        Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);

@@ -89,7 +89,7 @@ public class VistaCarrera2 extends javax.swing.JPanel {
 
         ConfirmarBoton.setText("Confirmar");
 
-        Ojo.setBackground(new java.awt.Color(0, 102, 102));
+        Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);

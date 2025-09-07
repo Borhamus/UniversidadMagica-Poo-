@@ -6,6 +6,7 @@ package integradorobjetos.vista;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
+import integradorobjetos.vista.Style;
 
 /**
  *
@@ -14,7 +15,20 @@ import javax.swing.JPanel;
 public class App extends javax.swing.JFrame {
 
     public App() {
+        
     initComponents();
+    
+    // Aplicar estilo mágico a los botones
+    Style.estiloBotonMagico(Alumnos);
+    Style.estiloBotonMagico(Carreras);
+    Style.estiloBotonMagico(PlanDeEstudios);
+    
+    // CAMBIAR LAS FUENTES DE LOS BOTONES
+    Alumnos.setFont(Style.FUENTE_NORMAL);
+    Carreras.setFont(Style.FUENTE_NORMAL);
+    PlanDeEstudios.setFont(Style.FUENTE_NORMAL);
+    
+    
     setLocationRelativeTo(null);
     setResizable(false); // Evitar que el usuario cambie el tamaño
     

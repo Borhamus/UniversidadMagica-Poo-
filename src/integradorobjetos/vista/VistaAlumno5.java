@@ -113,7 +113,7 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        Ojo.setBackground(new java.awt.Color(0, 102, 102));
+        Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);
