@@ -10,6 +10,7 @@ import integradorobjetos.modelo.Facultad;
 import integradorobjetos.vista.Style;
 import integradorobjetos.vista.VistaAlumno4;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
@@ -30,6 +31,20 @@ public class VistaAlumno1 extends javax.swing.JPanel {
      */
     public VistaAlumno1() {
         initComponents();
+        
+        // Crear el componente del ojo mágico
+        OjoMagico ojoMagico = new OjoMagico();
+        
+        // Configurar el panel Ojo para que contenga nuestro ojo mágico
+        Ojo.removeAll(); // Limpiar el panel
+        Ojo.setLayout(new BorderLayout()); // Establecer un layout
+        Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
+        
+        // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
+        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+
+        
+
         
         
         Fondo.setOpaque(false);
@@ -52,6 +67,8 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         // Inicializar componentes con datos del modelo
         inicializarComponentes();
         actualizarTabla();
+        
+        
     }
     
     private void inicializarComponentes() {
@@ -185,7 +202,7 @@ private void actualizarTabla() {
         ));
         ContTabla.setViewportView(TablaContenido);
 
-        Ojo.setBackground(new java.awt.Color(0, 102, 102));
+        Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);

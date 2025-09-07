@@ -26,6 +26,10 @@ public class Style {
     public static final Font FUENTE_NORMAL = new Font("Serif", Font.PLAIN, 16);
     public static final Font FUENTE_PEQUEÑA = new Font("Serif", Font.PLAIN, 14);
  
+    // Método para crear el ojo mágico
+    public static OjoMagico crearOjoMagico() {
+        return new OjoMagico();
+    }
     
     public static JLayer<JComponent> aplicarFondoEstrellado(JComponent panelExistente, int velocidadPx, int delayMs) {
         EstrellasUI ui = new EstrellasUI(velocidadPx, delayMs);
