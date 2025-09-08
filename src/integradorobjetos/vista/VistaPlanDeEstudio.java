@@ -5,8 +5,19 @@
 package integradorobjetos.vista;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -36,8 +47,57 @@ public class VistaPlanDeEstudio extends javax.swing.JPanel {
         setLayout(new BorderLayout());
         remove(Fondo);
         add(capaEstrellada, BorderLayout.CENTER);
+        
+        // Crear el componente del ojo mágico
+        OjoMagico ojoMagico = new OjoMagico();
+        
+        // Configurar el panel Ojo para que contenga nuestro ojo mágico
+        Ojo.removeAll(); // Limpiar el panel
+        Ojo.setLayout(new BorderLayout()); // Establecer un layout
+        Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
+        
+        // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
+        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        
+        // Cargar datos en la tabla
+        cargarDatosTabla();
     }
 
+        
+    
+    /**
+     * Carga los datos de los planes de estudio en la tabla de forma estática
+     */
+    private void cargarDatosTabla() {
+        // Crear el modelo de la tabla
+        DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Hacer todas las celdas no editables
+                return false;
+            }
+        };
+        
+        // Establecer los nombres de las columnas
+        modelo.setColumnIdentifiers(new Object[]{"Plan de Estudio", "Descripción"});
+        
+        // Agregar los datos de forma estática (hardcode)
+        modelo.addRow(new Object[]{"Plan A", "aprobó las cursadas de las correlativas."});
+        modelo.addRow(new Object[]{"Plan B", "aprobó los finales de las correlativas."});
+        modelo.addRow(new Object[]{"Plan C", "aprobó las cursadas de las correlativas y los finales de todas"});
+        modelo.addRow(new Object[]{"Plan C", "las materias de 5 cuatrimestres previos al que se quiere anotar."});
+        modelo.addRow(new Object[]{"Plan D", "aprobó las cursadas de las correlativas y los finales de todas"});
+        modelo.addRow(new Object[]{"Plan D", "las materias de 3 cuatrimestres previos al que se quiere anotar."});
+        modelo.addRow(new Object[]{"Plan E", "aprobó los finales de las correlativas y los finales de todas"});
+        modelo.addRow(new Object[]{"Plan E", "las materias de 3 cuatrimestres previos."});
+        
+        // Asignar el modelo a la tabla
+        jTable1.setModel(modelo);
+        
+    }
+
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -101,9 +161,9 @@ public class VistaPlanDeEstudio extends javax.swing.JPanel {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
-                .addGap(32, 32, 32))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(75, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

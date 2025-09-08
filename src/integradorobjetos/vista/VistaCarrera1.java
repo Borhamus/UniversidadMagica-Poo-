@@ -4,9 +4,17 @@
  */
 package integradorobjetos.vista;
 
+import integradorobjetos.modelo.Carrera;
+import integradorobjetos.modelo.Facultad;
+import integradorobjetos.modelo.Materia;
+import integradorobjetos.modelo.Plan;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -19,6 +27,19 @@ public class VistaCarrera1 extends javax.swing.JPanel {
      */
     public VistaCarrera1() {
         initComponents();
+        Fondo.setOpaque(false);
+        
+        // Crear el componente del ojo mágico
+        OjoMagico ojoMagico = new OjoMagico();
+        
+        // Configurar el panel Ojo para que contenga nuestro ojo mágico
+        Ojo.removeAll(); // Limpiar el panel
+        Ojo.setLayout(new BorderLayout()); // Establecer un layout
+        Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
+        
+        // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
+        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        
         Fondo.setOpaque(false);
         
         // Establecer dimensiones exactas
@@ -36,8 +57,63 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         setLayout(new BorderLayout());
         remove(Fondo);
         add(capaEstrellada, BorderLayout.CENTER);
+        
+        // Cargar datos en la tabla
+        cargarDatosTabla();
     }
 
+    private void cargarDatosTabla() {
+        // Obtener la instancia de la facultad
+        Facultad facultad = Facultad.getInstance();
+        List<Carrera> carreras = facultad.getCarreras();
+        
+        // Crear el modelo de la tabla con las columnas necesarias
+        DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Solo la columna "Editar" será editable
+                return column == 3;
+            }
+        };
+        
+        // Establecer los nombres de las columnas
+        modelo.setColumnIdentifiers(new Object[]{"Nombre de Carrera", "Carga Horaria", "Plan de Estudio", "Editar"});
+        
+        // Llenar la tabla con los datos de las carreras
+        for (Carrera carrera : carreras) {
+            // Calcular la carga horaria total de la carrera
+            int cargaHorariaTotal = 0;
+            for (Materia materia : carrera.getMaterias()) {
+                cargaHorariaTotal += materia.getCargaHoraria();
+            }
+            
+            // Obtener el nombre del plan de estudio
+            String nombrePlan = "Sin plan";
+            Plan plan = carrera.getPlanDeEstudio();
+            if (plan != null) {
+                nombrePlan = plan.getClass().getSimpleName(); // Obtiene PlanA, PlanB, etc.
+            }
+            
+            // Agregar la fila a la tabla
+            modelo.addRow(new Object[]{
+                carrera.getNombre(),
+                cargaHorariaTotal,
+                nombrePlan,
+                "Editar"
+            });
+        }
+        
+        // Asignar el modelo a la tabla
+        jTable1.setModel(modelo);
+        
+        // Ajustar el ancho de las columnas
+        TableColumnModel columnModel = jTable1.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(300); // Nombre de Carrera
+        columnModel.getColumn(1).setPreferredWidth(100);  // Carga Horaria
+        columnModel.getColumn(2).setPreferredWidth(150);  // Plan de Estudio
+        columnModel.getColumn(3).setPreferredWidth(80);   // Editar
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -83,11 +159,11 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         Ojo.setLayout(OjoLayout);
         OjoLayout.setHorizontalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 511, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         OjoLayout.setVerticalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 71, Short.MAX_VALUE)
+            .addGap(0, 117, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout FondoLayout = new javax.swing.GroupLayout(Fondo);
@@ -97,34 +173,30 @@ public class VistaCarrera1 extends javax.swing.JPanel {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 524, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Ojo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
-                    .addContainerGap(329, Short.MAX_VALUE)
-                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
         );
         FondoLayout.setVerticalGroup(
             FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(FondoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(28, Short.MAX_VALUE))
-            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
-                    .addContainerGap(321, Short.MAX_VALUE)
-                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addGap(62, 62, 62)
+                        .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -140,7 +212,7 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 398, Short.MAX_VALUE)
+            .addGap(0, 410, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
