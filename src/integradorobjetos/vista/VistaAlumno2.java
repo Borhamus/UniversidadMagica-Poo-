@@ -4,20 +4,32 @@
  */
 package integradorobjetos.vista;
 
+import integradorobjetos.modelo.Alumno;
+import integradorobjetos.modelo.Carrera;
+import integradorobjetos.modelo.EstadoInscripcion;
+import integradorobjetos.modelo.InscripcionMateria;
+import integradorobjetos.modelo.Materia;
+import integradorobjetos.vista.Style;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author Borhamus
  */
 public class VistaAlumno2 extends javax.swing.JPanel {
+    private Alumno alumno;
 
-    /**
-     * Creates new form VistaAlumno2
-     */
-    public VistaAlumno2() {
+    
+    public VistaAlumno2(Alumno alumno) {
+        this.alumno = alumno;
         initComponents();
         Fondo.setOpaque(false);
         
@@ -31,13 +43,133 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
         Fondo.setPreferredSize(new java.awt.Dimension(846, 398));
         
-        //Estilo estrellado
+        // Estilo estrellado
         JLayer<JComponent> capaEstrellada = Style.aplicarFondoEstrellado(Fondo, 1, 30);
         setLayout(new BorderLayout());
         remove(Fondo);
         add(capaEstrellada, BorderLayout.CENTER);
+        
+        // Crear el componente del ojo mágico
+        OjoMagico ojoMagico = new OjoMagico();
+        
+        // Configurar el panel Ojo para que contenga nuestro ojo mágico
+        Ojo.removeAll(); // Limpiar el panel
+        Ojo.setLayout(new BorderLayout()); // Establecer un layout
+        Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
+        
+        // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
+        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        
+        // Cargar datos del alumno
+        cargarDatosAlumno();
     }
+    
+    private void cargarDatosAlumno() {
+        // 1. Cargar nombre completo del alumno
+        Nombre.setText("Nombre: " + alumno.getNombre());
 
+        // 2. Cargar DNI con formato especial
+        Dni.setText("DNI: " + alumno.getDni() );
+
+        // 3. Cargar carreras finalizadas
+        StringBuilder carrerasFinalizadas = new StringBuilder("Carreras Finalizadas: ");
+
+        if (alumno.getCarrerasTerminadas().isEmpty()) {
+            carrerasFinalizadas.append("Ninguna");
+        } else {
+            for (Carrera carrera : alumno.getCarrerasTerminadas()) {
+                carrerasFinalizadas.append(carrera.getNombre()).append(", ");
+            }
+            // Eliminar la última coma y espacio
+            carrerasFinalizadas.setLength(carrerasFinalizadas.length() - 2);
+        }
+
+        CF.setText(carrerasFinalizadas.toString());
+
+        // 4. Cargar carrera cursando actualmente
+        String textoCarreraActiva = "Carrera Activa: ";
+        if (alumno.getCarreraInscripta() != null) {
+            textoCarreraActiva += alumno.getCarreraInscripta().getNombre();
+        } else {
+            textoCarreraActiva += "Sin Carrera";
+        }
+
+        CC.setText(textoCarreraActiva);
+
+        // 5. Cargar tabla de materias
+        cargarTablaMaterias();
+    }
+    
+    private void cargarTablaMaterias() {
+        // Crear modelo para la tabla de materias
+        InscripcionMateriaTableModel modelo = new InscripcionMateriaTableModel(alumno.getInscripciones());
+        Materias.setModel(modelo);
+        
+        // Configurar columnas
+        Materias.getColumnModel().getColumn(0).setPreferredWidth(200); // Materias Inscriptas
+        Materias.getColumnModel().getColumn(1).setPreferredWidth(100); // Cuatrimestre
+        Materias.getColumnModel().getColumn(2).setPreferredWidth(150); // Estado
+    }
+    
+    // Modelo de tabla para las inscripciones a materias
+    class InscripcionMateriaTableModel extends AbstractTableModel {
+        private List<InscripcionMateria> inscripciones;
+        private String[] columnNames = {"Materias Inscriptas", "Cuatrimestre", "Estado"}; // Columnas solicitadas
+        
+        public InscripcionMateriaTableModel(List<InscripcionMateria> inscripciones) {
+            this.inscripciones = new ArrayList<>(inscripciones);
+        }
+        
+        @Override
+        public int getRowCount() {
+            return inscripciones.size();
+        }
+        
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+        
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            InscripcionMateria inscripcion = inscripciones.get(rowIndex);
+            Materia materia = inscripcion.getMateria();
+            
+            switch (columnIndex) {
+                case 0: // Materias Inscriptas
+                    return materia.getNombre();
+                case 1: // Cuatrimestre
+                    return materia.getCuatrimestre() + "º";
+                case 2: // Estado
+                    return convertirEstadoToString(inscripcion.getEstado());
+                default:
+                    return null;
+            }
+        }
+        
+        @Override
+        public String getColumnName(int column) {
+            return columnNames[column];
+        }
+        
+        private String convertirEstadoToString(EstadoInscripcion estado) {
+            switch (estado) {
+                case INSCRIPTO:
+                    return "Inscripto";
+                case CURSADA_APROBADA:
+                    return "Cursada Aprobada";
+                case FINAL_APROBADO:
+                    return "Final Aprobado";
+                case REPROBADO:
+                    return "Reprobado";
+                default:
+                    return "Desconocido";
+            }
+        }
+    
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,9 +186,9 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         CF = new javax.swing.JTextField();
         CC = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        Materias = new javax.swing.JTable();
+        InscribirCarreraBoton = new javax.swing.JButton();
+        InscribirMateriaBoton = new javax.swing.JButton();
         Ojo = new javax.swing.JPanel();
 
         setMaximumSize(new java.awt.Dimension(846, 398));
@@ -103,7 +235,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        Materias.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -114,11 +246,11 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(Materias);
 
-        jButton1.setText("Inscribir a Carrera");
+        InscribirCarreraBoton.setText("Inscribir a Carrera");
 
-        jButton2.setText("Inscribir a Materias");
+        InscribirMateriaBoton.setText("Inscribir a Materias");
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -143,16 +275,12 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                     .addComponent(MarcoDeTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(InscribirCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(InscribirMateriaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
-                    .addContainerGap(329, Short.MAX_VALUE)
-                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
         );
         FondoLayout.setVerticalGroup(
             FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,17 +288,14 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(MarcoDeTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-            .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
-                    .addContainerGap(353, Short.MAX_VALUE)
-                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(InscribirMateriaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(InscribirCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -201,12 +326,12 @@ public class VistaAlumno2 extends javax.swing.JPanel {
     private javax.swing.JTextField CF;
     private javax.swing.JTextField Dni;
     private javax.swing.JPanel Fondo;
+    private javax.swing.JButton InscribirCarreraBoton;
+    private javax.swing.JButton InscribirMateriaBoton;
     private javax.swing.JPanel MarcoDeTexto;
+    private javax.swing.JTable Materias;
     private javax.swing.JTextField Nombre;
     private javax.swing.JPanel Ojo;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

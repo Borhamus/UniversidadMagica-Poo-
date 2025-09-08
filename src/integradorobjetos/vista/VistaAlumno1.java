@@ -10,16 +10,24 @@ import integradorobjetos.modelo.Facultad;
 import integradorobjetos.vista.Style;
 import integradorobjetos.vista.VistaAlumno4;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -101,6 +109,48 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         if (modeloCombo.getSize() > 0) {
             BarraDeCarreras.setSelectedIndex(0);
         }
+        
+        TablaContenido.setModel(modeloTabla);
+    
+        // Agregar MouseListener para manejar clics en la columna "Ver"
+        TablaContenido.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = TablaContenido.columnAtPoint(e.getPoint());
+                int row = TablaContenido.rowAtPoint(e.getPoint());
+
+                // Verificamos si se hizo clic en la columna "Ver" (índice 4)
+                if (column == 4) {
+                    // Obtenemos el alumno de la fila seleccionada
+                    Alumno alumno = modeloTabla.getAlumnoAt(row);
+
+                    // Creamos la VistaAlumno2 y le pasamos el alumno
+                    VistaAlumno2 vistaAlumno2 = new VistaAlumno2(alumno);
+
+                    // Reemplazamos el contenido del panel Fondo con esta nueva vista
+                    Fondo.removeAll();
+                    Fondo.setLayout(new BorderLayout());
+                    Fondo.add(vistaAlumno2, BorderLayout.CENTER);
+                    Fondo.revalidate();
+                    Fondo.repaint();
+                }
+            }
+        });
+        
+        TablaContenido.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
+                                                       boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
+                label.setText("<html><u>" + value + "</u></html>");
+                label.setForeground(Color.BLUE);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+            return c;
+        }
+    });
     }
     
     private void actualizarTabla() {
@@ -134,7 +184,7 @@ public class VistaAlumno1 extends javax.swing.JPanel {
     
     class AlumnoTableModel extends AbstractTableModel {
         private List<Alumno> alumnos;
-        private String[] columnNames = {"Nombre", "DNI", "Carrera", "Estado"};
+        private String[] columnNames = {"Nombre", "DNI", "Carrera", "Estado", "Ver"};
         
         public AlumnoTableModel(List<Alumno> alumnos) {
             this.alumnos = new ArrayList<>(alumnos);
@@ -145,11 +195,11 @@ public class VistaAlumno1 extends javax.swing.JPanel {
             return alumnos.size();
         }
         
-        @Override
+         @Override
         public int getColumnCount() {
-            return columnNames.length;
+            return columnNames.length; // Ahora devuelve 5
         }
-        
+
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             Alumno alumno = alumnos.get(rowIndex);
@@ -168,6 +218,7 @@ public class VistaAlumno1 extends javax.swing.JPanel {
                     } else {
                         return "Sin carrera";
                     }
+                case 4: return "editar"; // Nueva columna
                 default: return null;
             }
         }
