@@ -193,31 +193,14 @@ public class VistaAlumno4 extends javax.swing.JPanel {
     }
 }
 
-private void redirigirAVistaAlumno1() {
-    try {
-        // Obtener el JFrame que contiene este panel
-        java.awt.Container parent = this.getParent();
-        while (parent != null && !(parent instanceof java.awt.Frame)) {
-            parent = parent.getParent();
-        }
-        
-        if (parent != null) {
-            // Crear una instancia de VistaAlumno1
-            VistaAlumno1 vistaAlumno1 = new VistaAlumno1();
-            
-            // Reemplazar el contenido del JFrame con VistaAlumno1
-            java.awt.Frame frame = (java.awt.Frame) parent;
+    private void redirigirAVistaAlumno1() {
+        VistaAlumno1 panel = new VistaAlumno1();
             Fondo.removeAll();
-            Fondo.add(vistaAlumno1);
+            Fondo.setLayout(new BorderLayout());
+            Fondo.add(panel, BorderLayout.CENTER);
             Fondo.revalidate();
             Fondo.repaint();
-        }
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, 
-            "Error al cambiar de vista: " + ex.getMessage(), 
-            "Error", JOptionPane.ERROR_MESSAGE);
     }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.

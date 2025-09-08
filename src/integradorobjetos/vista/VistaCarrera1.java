@@ -4,6 +4,7 @@
  */
 package integradorobjetos.vista;
 
+import integradorobjetos.modelo.Alumno;
 import integradorobjetos.modelo.Carrera;
 import integradorobjetos.modelo.Facultad;
 import integradorobjetos.modelo.Materia;
@@ -13,6 +14,7 @@ import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -150,8 +152,18 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jTable1);
 
         CrearCarreraBoton.setText("Crear Carrera");
+        CrearCarreraBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CrearCarreraBotonActionPerformed(evt);
+            }
+        });
 
         EliminarCarreraBoton.setText("EliminarCarrera");
+        EliminarCarreraBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarCarreraBotonActionPerformed(evt);
+            }
+        });
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -220,6 +232,89 @@ public class VistaCarrera1 extends javax.swing.JPanel {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void CrearCarreraBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearCarreraBotonActionPerformed
+        VistaCarrera2 panel = new VistaCarrera2();
+        Fondo.removeAll();
+        Fondo.setLayout(new BorderLayout());
+        Fondo.add(panel, BorderLayout.CENTER);
+        Fondo.revalidate();
+        Fondo.repaint();
+    }//GEN-LAST:event_CrearCarreraBotonActionPerformed
+
+    private void EliminarCarreraBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarCarreraBotonActionPerformed
+        // Verificar si hay una fila seleccionada
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Debe seleccionar una carrera para eliminar", 
+                "Error de Selección", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener el nombre de la carrera seleccionada
+        String nombreCarrera = (String) jTable1.getValueAt(filaSeleccionada, 0);
+
+        // Confirmar la eliminación
+        int confirmacion = JOptionPane.showConfirmDialog(this, 
+            "¿Está seguro que desea eliminar la carrera " + nombreCarrera + "?\n" +
+            "Todos los alumnos inscriptos quedarán sin carrera asignada.", 
+            "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            // Obtener la instancia de la facultad
+            Facultad facultad = Facultad.getInstance();
+
+            // Buscar la carrera a eliminar
+            Carrera carreraAEliminar = facultad.buscarCarrera(nombreCarrera);
+            if (carreraAEliminar == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "No se encontró la carrera especificada", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Desinscribir a todos los alumnos de esta carrera
+            desinscribirAlumnosDeCarrera(carreraAEliminar);
+
+            // Eliminar la carrera de la facultad
+            facultad.eliminarCarrera(carreraAEliminar);
+
+            // Mostrar mensaje de éxito
+            JOptionPane.showMessageDialog(this, 
+                "Carrera eliminada con éxito\n" +
+                "Los alumnos han sido desinscriptos", 
+                "Eliminación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+
+            // Actualizar la tabla
+            cargarDatosTabla();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Error al eliminar carrera: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void desinscribirAlumnosDeCarrera(Carrera carrera) {
+        // Obtener todos los alumnos de la facultad
+        List<Alumno> alumnos = Facultad.getInstance().getAlumnos();
+
+        // Recorrer todos los alumnos
+        for (Alumno alumno : alumnos) {
+            // Verificar si el alumno está inscripto en esta carrera
+            if (alumno.getCarreraInscripta() != null && 
+                alumno.getCarreraInscripta().getNombre().equals(carrera.getNombre())) {
+
+                // Desinscribir al alumno (dejar sin carrera)
+                alumno.setCarreraInscripta(null);
+            }
+        }
+    }//GEN-LAST:event_EliminarCarreraBotonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

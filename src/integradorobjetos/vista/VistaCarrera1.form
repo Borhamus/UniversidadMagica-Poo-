@@ -126,11 +126,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Carrera"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CrearCarreraBotonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="EliminarCarreraBoton">
           <Properties>
             <Property name="text" type="java.lang.String" value="EliminarCarrera"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="EliminarCarreraBotonActionPerformed"/>
+          </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="Ojo">
           <Properties>

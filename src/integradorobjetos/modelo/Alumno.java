@@ -24,6 +24,10 @@ public class Alumno {
         this.inscripciones = new ArrayList<>();
     }
     
+    public void setCarreraInscripta(Carrera carrera) {
+        this.carreraInscripta = carrera;
+    }   
+    
     // Método para inscribirse en una nueva carrera
     public void inscribirCarrera(Carrera carrera) {
         if (carreraInscripta != null) {

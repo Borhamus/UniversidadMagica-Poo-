@@ -23,6 +23,10 @@ public class Facultad {
         return instancia;
     }
     
+    public void eliminarCarrera(Carrera carrera) {
+        carreras.remove(carrera);
+    }
+    
     public boolean eliminarAlumno(Alumno alumno) {
         if (alumno != null) {
             return alumnos.remove(alumno);
