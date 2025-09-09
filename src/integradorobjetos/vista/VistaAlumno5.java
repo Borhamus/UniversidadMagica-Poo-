@@ -10,13 +10,22 @@ import integradorobjetos.modelo.EstadoInscripcion;
 import integradorobjetos.modelo.InscripcionMateria;
 import integradorobjetos.modelo.Materia;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -31,53 +40,36 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         this.alumno = alumno;
         initComponents();
         Fondo.setOpaque(false);
-        
+
         // Establecer dimensiones exactas
         setMaximumSize(new java.awt.Dimension(846, 398));
         setMinimumSize(new java.awt.Dimension(846, 398));
         setPreferredSize(new java.awt.Dimension(846, 398));
-        
+
         // Configurar el panel Fondo para que ocupe todo el espacio
         Fondo.setMaximumSize(new java.awt.Dimension(846, 398));
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
         Fondo.setPreferredSize(new java.awt.Dimension(846, 398));
-        
+
         //Estilo estrellado
         JLayer<JComponent> capaEstrellada = Style.aplicarFondoEstrellado(Fondo, 1, 30);
         setLayout(new BorderLayout());
         remove(Fondo);
         add(capaEstrellada, BorderLayout.CENTER);
-        
+
         // Crear el componente del ojo mágico
         OjoMagico ojoMagico = new OjoMagico();
-        
+
         // Configurar el panel Ojo para que contenga nuestro ojo mágico
         Ojo.removeAll(); // Limpiar el panel
         Ojo.setLayout(new BorderLayout()); // Establecer un layout
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
-        
+
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
         Ojo.setPreferredSize(new Dimension(200, 40)); // Alto de 100px para que se vea el ojo
-        
+
         // Cargar datos del alumno
         cargarDatosAlumno();
-        
-        // Agregar listener a la tabla para manejar los cambios en los checkboxes
-        MateriasDeLaCarrera.getModel().addTableModelListener(new javax.swing.event.TableModelListener() {
-            @Override
-            public void tableChanged(javax.swing.event.TableModelEvent e) {
-                if (e.getColumn() == 5) { // Solo para la columna de checkboxes
-                    int row = e.getFirstRow();
-                    MateriasCarreraTableModel model = (MateriasCarreraTableModel) MateriasDeLaCarrera.getModel();
-
-                    if (model.isSelected(row)) {
-                        // El checkbox fue marcado, mostrar popup de confirmación
-                        Materia materiaSeleccionada = model.getMateriaAt(row);
-                        manejarSeleccionMateria(materiaSeleccionada, row);
-                    }
-                }
-            }
-        });
     }
     
     private void cargarDatosAlumno() {
@@ -119,8 +111,8 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                 "Sin Carrera Activa", 
                 JOptionPane.WARNING_MESSAGE
             );
-            // Crear modelo vacío
-            MateriasDeLaCarrera.setModel(new MateriasCarreraTableModel(new ArrayList<>()));
+            // Crear modelo vacío - CORREGIDO: incluir el objeto alumno
+            MateriasDeLaCarrera.setModel(new MateriasCarreraTableModel(new ArrayList<>(), alumno));
             return;
         }
 
@@ -141,41 +133,85 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         MateriasDeLaCarrera.getColumnModel().getColumn(3).setPreferredWidth(50); // Carga Horaria
         MateriasDeLaCarrera.getColumnModel().getColumn(4).setPreferredWidth(250); // Correlativas
         MateriasDeLaCarrera.getColumnModel().getColumn(5).setPreferredWidth(50);  // Agregar
-        
+
         // Hacer que la tabla sea más alta para mostrar bien los checkboxes
         MateriasDeLaCarrera.setRowHeight(25);
+
+        // Configurar renderizador y editor después de cargar los datos
+        configurarTabla();
+    }
+    
+    private void configurarTabla() {
+        // Configurar renderizador y editor personalizados para la columna "Agregar"
+        if (MateriasDeLaCarrera.getColumnCount() > 5) {
+            MateriasDeLaCarrera.getColumnModel().getColumn(5).setCellRenderer(new CheckboxRenderer());
+            MateriasDeLaCarrera.getColumnModel().getColumn(5).setCellEditor(new CheckboxEditor());
+
+            // Agregar listener a la tabla para manejar los cambios en los checkboxes
+            MateriasDeLaCarrera.getModel().addTableModelListener(new javax.swing.event.TableModelListener() {
+                @Override
+                public void tableChanged(javax.swing.event.TableModelEvent e) {
+                    if (e.getColumn() == 5) { // Solo para la columna de checkboxes
+                        int row = e.getFirstRow();
+                        MateriasCarreraTableModel model = (MateriasCarreraTableModel) MateriasDeLaCarrera.getModel();
+                        Object value = model.getValueAt(row, 5);
+                        // Solo manejar si es un Boolean y está marcado
+                        if (value instanceof Boolean && (Boolean) value) {
+                            // El checkbox fue marcado, mostrar popup de confirmación
+                            Materia materiaSeleccionada = model.getMateriaAt(row);
+                            manejarSeleccionMateria(materiaSeleccionada, row);
+                        }
+                    }
+                }
+            });
+        }
     }
     
     // Modelo de tabla para las materias de la carrera
     class MateriasCarreraTableModel extends AbstractTableModel {
-        private List<Materia> materias;
+        private List<Materia> materiasOriginales; // Lista completa de materias
+        private List<Materia> materiasFiltradas; // Lista de materias a mostrar
         private Alumno alumno;
         private List<Boolean> seleccionados; // Para trackear los checkboxes
         private String[] columnNames = {"Nombre de Materia", "Cuatrimestre", "Es Optativa", "Carga Horaria", "Correlativas", "Agregar"};
 
         public MateriasCarreraTableModel(List<Materia> materias, Alumno alumno) {
-            this.materias = new ArrayList<>(materias);
+            this.materiasOriginales = new ArrayList<>(materias);
             this.alumno = alumno;
             this.seleccionados = new ArrayList<>();
-            // Inicializar todos los checkboxes como no seleccionados
-            for (int i = 0; i < materias.size(); i++) {
-                seleccionados.add(false);
-            }
+
+            // Filtrar las materias según el estado de inscripción
+            filtrarMaterias();
         }
 
-        public MateriasCarreraTableModel(List<Materia> materias) {
-            this.materias = new ArrayList<>(materias);
-            this.alumno = null;
+        private void filtrarMaterias() {
+            this.materiasFiltradas = new ArrayList<>();
             this.seleccionados = new ArrayList<>();
-            // Inicializar todos los checkboxes como no seleccionados
-            for (int i = 0; i < materias.size(); i++) {
-                seleccionados.add(false);
+
+            for (Materia materia : materiasOriginales) {
+                EstadoInscripcion estado = obtenerEstadoInscripcion(materia);
+
+                // No mostrar materias aprobadas o con final aprobado
+                if (estado == EstadoInscripcion.CURSADA_APROBADA || 
+                    estado == EstadoInscripcion.FINAL_APROBADO) {
+                    continue;
+                }
+
+                // Agregar la materia a la lista filtrada
+                materiasFiltradas.add(materia);
+
+                // Inicializar el estado del checkbox
+                if (estado == EstadoInscripcion.INSCRIPTO) {
+                    seleccionados.add(true); // Checkbox marcado si está inscripto
+                } else {
+                    seleccionados.add(false); // Checkbox no marcado en otros casos
+                }
             }
         }
 
         @Override
         public int getRowCount() {
-            return materias.size();
+            return materiasFiltradas.size();
         }
 
         @Override
@@ -185,8 +221,7 @@ public class VistaAlumno5 extends javax.swing.JPanel {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            Materia materia = materias.get(rowIndex);
-
+            Materia materia = materiasFiltradas.get(rowIndex);
             switch (columnIndex) {
                 case 0: // Nombre de Materia
                     return materia.getNombre();
@@ -198,8 +233,15 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                     return materia.getCargaHoraria() + " hs";
                 case 4: // Correlativas
                     return obtenerNombresCorrelativas(materia);
-                case 5: // Agregar (ahora es un checkbox)
-                    return seleccionados.get(rowIndex);
+                case 5: // Agregar (checkbox o texto según estado)
+                    if (alumno == null) {
+                        return false; // Sin alumno, checkbox no marcado
+                    }
+                    EstadoInscripcion estado = obtenerEstadoInscripcion(materia);
+                    if (estado == EstadoInscripcion.INSCRIPTO) {
+                        return seleccionados.get(rowIndex); // Checkbox marcado
+                    }
+                    return seleccionados.get(rowIndex); // Checkbox normal
                 default:
                     return null;
             }
@@ -208,8 +250,11 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         @Override
         public void setValueAt(Object value, int row, int col) {
             if (col == 5) { // Solo para la columna de checkboxes
-                seleccionados.set(row, (Boolean) value);
-                fireTableCellUpdated(row, col);
+                // Solo actualizar si es un Boolean
+                if (value instanceof Boolean) {
+                    seleccionados.set(row, (Boolean) value);
+                    fireTableCellUpdated(row, col);
+                }
             }
         }
 
@@ -223,13 +268,29 @@ public class VistaAlumno5 extends javax.swing.JPanel {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            // Solo la columna de checkboxes es editable
-            return columnIndex == 5;
+            // Solo la columna de checkboxes es editable, y solo si no está inscripta
+            if (columnIndex == 5) {
+                if (alumno == null) return false;
+                EstadoInscripcion estado = obtenerEstadoInscripcion(materiasFiltradas.get(rowIndex));
+                return estado != EstadoInscripcion.INSCRIPTO;
+            }
+            return false;
         }
 
         @Override
         public String getColumnName(int column) {
             return columnNames[column];
+        }
+
+        // Método para obtener el estado de inscripción de una materia
+        private EstadoInscripcion obtenerEstadoInscripcion(Materia materia) {
+            if (alumno == null) return null;
+            for (InscripcionMateria inscripcion : alumno.getInscripciones()) {
+                if (inscripcion.getMateria().equals(materia)) {
+                    return inscripcion.getEstado();
+                }
+            }
+            return null; // No está inscripto
         }
 
         // Método para obtener los nombres de las correlativas como texto
@@ -238,24 +299,21 @@ public class VistaAlumno5 extends javax.swing.JPanel {
             if (correlativas == null || correlativas.isEmpty()) {
                 return "Ninguna";
             }
-
             StringBuilder nombres = new StringBuilder();
             for (Materia correlativa : correlativas) {
                 nombres.append(correlativa.getNombre()).append(", ");
             }
-
             // Eliminar la última coma y espacio
             if (nombres.length() > 0) {
                 nombres.setLength(nombres.length() - 2);
             }
-
             return nombres.toString();
         }
 
         // Método para obtener la materia en una fila específica
         public Materia getMateriaAt(int row) {
-            if (row >= 0 && row < materias.size()) {
-                return materias.get(row);
+            if (row >= 0 && row < materiasFiltradas.size()) {
+                return materiasFiltradas.get(row);
             }
             return null;
         }
@@ -271,21 +329,114 @@ public class VistaAlumno5 extends javax.swing.JPanel {
             fireTableCellUpdated(row, 5);
         }
     }
+
+    private boolean verificarCorrelativas(Materia materia) {
+        List<Materia> correlativas = materia.getCorrelativas();
+
+        // Si no hay correlativas, se puede inscribir
+        if (correlativas == null || correlativas.isEmpty()) {
+            return true;
+        }
+
+        // Verificar cada correlativa
+        for (Materia correlativa : correlativas) {
+            boolean correlativaAprobada = false;
+
+            // Buscar si el alumno tiene aprobada esta correlativa
+            for (InscripcionMateria inscripcion : alumno.getInscripciones()) {
+                if (inscripcion.getMateria().equals(correlativa)) {
+                    if (inscripcion.getEstado() == EstadoInscripcion.CURSADA_APROBADA || 
+                        inscripcion.getEstado() == EstadoInscripcion.FINAL_APROBADO) {
+                        correlativaAprobada = true;
+                        break;
+                    }
+                }
+            }
+
+            // Si alguna correlativa no está aprobada, no se puede inscribir
+            if (!correlativaAprobada) {
+                return false;
+            }
+        }
+
+        // Todas las correlativas están aprobadas
+        return true;
+    }
+    
+    class CheckboxRenderer extends DefaultTableCellRenderer {
+        private JCheckBox checkbox = new JCheckBox();
+
+        public CheckboxRenderer() {
+            checkbox.setOpaque(true);
+            checkbox.setHorizontalAlignment(SwingConstants.CENTER);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+
+            if (value instanceof Boolean) {
+                // Es un checkbox
+                checkbox.setSelected((Boolean) value);
+                checkbox.setEnabled(table.isCellEditable(row, column));
+                checkbox.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                checkbox.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return checkbox;
+            } else {
+                // Es un String (ej. "Aprobada")
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                label.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                return label;
+            }
+        }
+    }
+    
+    class CheckboxEditor extends DefaultCellEditor {
+        private JCheckBox checkbox;
+
+        public CheckboxEditor() {
+            super(new JCheckBox());
+            this.checkbox = (JCheckBox) getComponent();
+            checkbox.setOpaque(true);
+            checkbox.setHorizontalAlignment(SwingConstants.CENTER);
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, 
+                boolean isSelected, int row, int column) {
+            if (value instanceof Boolean) {
+                checkbox.setSelected((Boolean) value);
+                checkbox.setEnabled(true);
+                return checkbox;
+            } else {
+                // Si no es un Boolean, no permitimos edición
+                return null;
+            }
+        }
+
+        @Override
+        public boolean isCellEditable(EventObject anEvent) {
+            // Simplificamos la lógica para evitar el error
+            // El modelo de tabla ya determina qué celdas son editables
+            return true;
+        }
+    }
     
     private void manejarSeleccionMateria(Materia materia, int row) {
-        // Verificar si el alumno ya está inscripto en esta materia
+        // Obtener el estado actual de inscripción
+        EstadoInscripcion estadoActual = null;
         for (InscripcionMateria inscripcion : alumno.getInscripciones()) {
             if (inscripcion.getMateria().equals(materia)) {
-                JOptionPane.showMessageDialog(
-                    this, 
-                    "Ya estás inscripto en esta materia.", 
-                    "Inscripción duplicada", 
-                    JOptionPane.WARNING_MESSAGE
-                );
-                // Deseleccionar el checkbox
-                ((MateriasCarreraTableModel) MateriasDeLaCarrera.getModel()).setSelected(row, false);
-                return;
+                estadoActual = inscripcion.getEstado();
+                break;
             }
+        }
+
+        // Si ya está inscripto, no hacemos nada (el checkbox ya estaba marcado)
+        if (estadoActual == EstadoInscripcion.INSCRIPTO) {
+            return;
         }
 
         // Verificar correlativas
@@ -329,41 +480,8 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         }
     }
     
-    private boolean verificarCorrelativas(Materia materia) {
-        List<Materia> correlativas = materia.getCorrelativas();
-
-        // Si no hay correlativas, se puede inscribir
-        if (correlativas == null || correlativas.isEmpty()) {
-            return true;
-        }
-
-        // Verificar cada correlativa
-        for (Materia correlativa : correlativas) {
-            boolean correlativaAprobada = false;
-
-            // Buscar si el alumno tiene aprobada esta correlativa
-            for (InscripcionMateria inscripcion : alumno.getInscripciones()) {
-                if (inscripcion.getMateria().equals(correlativa)) {
-                    if (inscripcion.getEstado() == EstadoInscripcion.CURSADA_APROBADA || 
-                        inscripcion.getEstado() == EstadoInscripcion.FINAL_APROBADO) {
-                        correlativaAprobada = true;
-                        break;
-                    }
-                }
-            }
-
-            // Si alguna correlativa no está aprobada, no se puede inscribir
-            if (!correlativaAprobada) {
-                return false;
-            }
-        }
-
-        // Todas las correlativas están aprobadas
-        return true;
-    }
     
-    /**
-     * This method is called from within the constructor to initialize the form.
+     /* This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
