@@ -50,6 +50,12 @@ public class Alumno {
         }
     }
     
+    public void eliminarInscripcion(InscripcionMateria inscripcion) {
+        if (inscripciones.contains(inscripcion)) {
+            inscripciones.remove(inscripcion);
+        }
+    }
+    
     // Método para obtener todas las carreras terminadas
     public List<Carrera> getCarrerasTerminadas() {
         return new ArrayList<>(carrerasTerminadas);

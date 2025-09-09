@@ -4,7 +4,10 @@
  */
 package integradorobjetos.vista;
 
+import integradorobjetos.modelo.Alumno;
 import integradorobjetos.modelo.Carrera;
+import integradorobjetos.modelo.Facultad;
+import integradorobjetos.modelo.InscripcionMateria;
 import integradorobjetos.modelo.Materia;
 import integradorobjetos.modelo.Plan;
 import java.awt.BorderLayout;
@@ -437,8 +440,20 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jTable1);
 
         CrearMateriaBoton.setText("Crear Materia");
+        CrearMateriaBoton.setFocusable(false);
+        CrearMateriaBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CrearMateriaBotonActionPerformed(evt);
+            }
+        });
 
         EliminarMateriaBoton.setText("Eliminar Materia");
+        EliminarMateriaBoton.setFocusable(false);
+        EliminarMateriaBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarMateriaBotonActionPerformed(evt);
+            }
+        });
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
         Ojo.setMaximumSize(new java.awt.Dimension(597, 38));
@@ -514,6 +529,94 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_OptativasActionPerformed
 
+    private void CrearMateriaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearMateriaBotonActionPerformed
+        VistaMateria1 panel = new VistaMateria1();
+        Fondo.removeAll();
+        Fondo.setLayout(new BorderLayout());
+        Fondo.add(panel, BorderLayout.CENTER);
+        Fondo.revalidate();
+        Fondo.repaint();
+    }//GEN-LAST:event_CrearMateriaBotonActionPerformed
+
+    private void EliminarMateriaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarMateriaBotonActionPerformed
+        // Verificar si hay una fila seleccionada
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Debe seleccionar una materia para eliminar", 
+                "Error de Selección", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener la materia seleccionada del modelo de tabla
+        MateriasCarreraTableModel modelo = (MateriasCarreraTableModel) jTable1.getModel();
+        Materia materiaAEliminar = modelo.getMateriaAt(filaSeleccionada);
+
+        if (materiaAEliminar == null) {
+            JOptionPane.showMessageDialog(this, 
+                "No se pudo obtener la materia seleccionada", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Confirmar la eliminación
+        int confirmacion = JOptionPane.showConfirmDialog(this, 
+            "¿Está seguro que desea eliminar la materia " + materiaAEliminar.getNombre() + "?\n" +
+            "Todos los alumnos inscriptos en esta materia perderán la inscripción.", 
+            "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            // Eliminar las inscripciones de los alumnos en esta materia
+            eliminarInscripcionesDeMateria(materiaAEliminar);
+
+            // Eliminar la materia de la carrera
+            carrera.eliminarMateria(materiaAEliminar);
+
+            // Mostrar mensaje de éxito
+            JOptionPane.showMessageDialog(this, 
+                "Materia eliminada con éxito\n" +
+                "Las inscripciones de los alumnos han sido eliminadas", 
+                "Eliminación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+
+            // Actualizar la tabla
+            cargarTablaMaterias();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Error al eliminar materia: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_EliminarMateriaBotonActionPerformed
+
+    // Método para eliminar las inscripciones de los alumnos en una materia
+    private void eliminarInscripcionesDeMateria(Materia materia) {
+        // Obtener todos los alumnos de la facultad
+        List<Alumno> alumnos = Facultad.getInstance().getAlumnos();
+
+        // Recorrer todos los alumnos
+        for (Alumno alumno : alumnos) {
+            // Obtener las inscripciones del alumno
+            List<InscripcionMateria> inscripciones = alumno.getInscripciones();
+
+            // Crear una lista de inscripciones a eliminar (para evitar ConcurrentModificationException)
+            List<InscripcionMateria> inscripcionesAEliminar = new ArrayList<>();
+
+            // Buscar inscripciones a esta materia
+            for (InscripcionMateria inscripcion : inscripciones) {
+                if (inscripcion.getMateria().equals(materia)) {
+                    inscripcionesAEliminar.add(inscripcion);
+                }
+            }
+
+            // Eliminar las inscripciones encontradas
+            for (InscripcionMateria inscripcion : inscripcionesAEliminar) {
+                alumno.eliminarInscripcion(inscripcion);
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CargaHoraria;

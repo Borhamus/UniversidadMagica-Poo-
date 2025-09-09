@@ -78,6 +78,21 @@ public class Carrera {
         return resultado;
     }
     
+    public void eliminarMateria(Materia materia) {
+        if (materiasDeLaCarrera.contains(materia)) {
+            // Eliminar la materia de la lista
+            materiasDeLaCarrera.remove(materia);
+            
+            // Eliminar esta materia como correlativa de otras materias
+            for (Materia m : materiasDeLaCarrera) {
+                List<Materia> correlativas = m.getCorrelativas();
+                if (correlativas.contains(materia)) {
+                    correlativas.remove(materia);
+                }
+            }
+        }
+    }
+    
     // Patrón Strategy
     public boolean puedeCursar(Alumno alumno, Materia materia) {
         return planDeEstudio.puedeCursar(alumno, materia);
