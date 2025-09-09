@@ -10,11 +10,19 @@ import integradorobjetos.modelo.Facultad;
 import integradorobjetos.modelo.Materia;
 import integradorobjetos.modelo.Plan;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -27,7 +35,7 @@ public class VistaCarrera1 extends javax.swing.JPanel {
     /**
      * Creates new form VistaCarrera1
      */
-    public VistaCarrera1() {
+     public VistaCarrera1() {
         initComponents();
         Fondo.setOpaque(false);
         
@@ -63,7 +71,7 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         // Cargar datos en la tabla
         cargarDatosTabla();
     }
-
+    
     private void cargarDatosTabla() {
         // Obtener la instancia de la facultad
         Facultad facultad = Facultad.getInstance();
@@ -114,7 +122,51 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         columnModel.getColumn(1).setPreferredWidth(100);  // Carga Horaria
         columnModel.getColumn(2).setPreferredWidth(150);  // Plan de Estudio
         columnModel.getColumn(3).setPreferredWidth(80);   // Editar
+        
+        // Agregar MouseListener para manejar clics en la columna "Editar"
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = jTable1.columnAtPoint(e.getPoint());
+                int row = jTable1.rowAtPoint(e.getPoint());
+                // Verificamos si se hizo clic en la columna "Editar" (índice 3)
+                if (column == 3) {
+                    // Obtenemos el nombre de la carrera de la fila seleccionada
+                    String nombreCarrera = (String) jTable1.getValueAt(row, 0);
+                    // Buscamos la carrera en la facultad
+                    Facultad facultad = Facultad.getInstance();
+                    Carrera carrera = facultad.buscarCarrera(nombreCarrera);
+                    if (carrera != null) {
+                        // Creamos la VistaCarrera3 y le pasamos la carrera
+                        VistaCarrera3 vistaCarrera3 = new VistaCarrera3(carrera);
+                        // Reemplazamos el contenido del panel Fondo con esta nueva vista
+                        Fondo.removeAll();
+                        Fondo.setLayout(new BorderLayout());
+                        Fondo.add(vistaCarrera3, BorderLayout.CENTER);
+                        Fondo.revalidate();
+                        Fondo.repaint();
+                    }
+                }
+            }
+        });
+        
+        // Configurar renderizador para la columna "Editar" para que aparezca como un enlace
+        jTable1.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
+                                                           boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (c instanceof JLabel) {
+                    JLabel label = (JLabel) c;
+                    label.setText("<html><u>" + value + "</u></html>");
+                    label.setForeground(Color.BLUE);
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                }
+                return c;
+            }
+        });
     }
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -187,9 +239,9 @@ public class VistaCarrera1 extends javax.swing.JPanel {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 30, Short.MAX_VALUE)
                         .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -212,7 +264,7 @@ public class VistaCarrera1 extends javax.swing.JPanel {
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addGap(37, 37, 37)
                         .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -222,7 +274,6 @@ public class VistaCarrera1 extends javax.swing.JPanel {
             .addGap(0, 846, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(Fondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
@@ -230,10 +281,7 @@ public class VistaCarrera1 extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 410, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 6, Short.MAX_VALUE)
-                    .addComponent(Fondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 6, Short.MAX_VALUE)))
+                .addComponent(Fondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
