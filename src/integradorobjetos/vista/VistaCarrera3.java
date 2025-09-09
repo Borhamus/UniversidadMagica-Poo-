@@ -5,6 +5,7 @@
 package integradorobjetos.vista;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
 
@@ -36,6 +37,17 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         setLayout(new BorderLayout());
         remove(Fondo);
         add(capaEstrellada, BorderLayout.CENTER);
+        
+        // Crear el componente del ojo mágico
+        OjoMagico ojoMagico = new OjoMagico();
+        
+        // Configurar el panel Ojo para que contenga nuestro ojo mágico
+        Ojo.removeAll(); // Limpiar el panel
+        Ojo.setLayout(new BorderLayout()); // Establecer un layout
+        Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
+        
+        // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
+        Ojo.setPreferredSize(new Dimension(597, 38)); // Alto de 100px para que se vea el ojo
     }
 
     /**
@@ -120,16 +132,18 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         EliminarMateriaBoton.setText("Eliminar Materia");
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
+        Ojo.setMaximumSize(new java.awt.Dimension(597, 38));
+        Ojo.setMinimumSize(new java.awt.Dimension(597, 38));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);
         OjoLayout.setHorizontalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 597, Short.MAX_VALUE)
         );
         OjoLayout.setVerticalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 39, Short.MAX_VALUE)
+            .addGap(0, 38, Short.MAX_VALUE)
         );
 
         Optativas.setText("Optativas Minimas:");

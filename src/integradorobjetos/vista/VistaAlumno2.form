@@ -187,17 +187,31 @@
         <Component class="javax.swing.JButton" name="InscribirCarreraBoton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Inscribir a Carrera"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="InscribirCarreraBotonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="InscribirMateriaBoton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Inscribir a Materias"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="InscribirMateriaBotonActionPerformed"/>
+          </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="Ojo">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" red="0" type="rgb"/>
+            </Property>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[511, 39]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[511, 39]"/>
             </Property>
           </Properties>
 

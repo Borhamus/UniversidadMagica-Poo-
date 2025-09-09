@@ -51,7 +51,7 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
         
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
-        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        Ojo.setPreferredSize(new Dimension(433, 67)); // Alto de 100px para que se vea el ojo
         
         Fondo.setOpaque(false);
         
@@ -280,6 +280,9 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         ContTabla.setViewportView(TablaContenido);
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
+        Ojo.setMaximumSize(new java.awt.Dimension(433, 67));
+        Ojo.setMinimumSize(new java.awt.Dimension(433, 67));
+        Ojo.setPreferredSize(new java.awt.Dimension(433, 67));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);

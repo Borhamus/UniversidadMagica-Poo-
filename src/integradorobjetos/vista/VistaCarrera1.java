@@ -40,7 +40,7 @@ public class VistaCarrera1 extends javax.swing.JPanel {
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
         
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
-        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        Ojo.setPreferredSize(new Dimension(443, 75)); // Alto de 100px para que se vea el ojo
         
         Fondo.setOpaque(false);
         
@@ -126,17 +126,32 @@ public class VistaCarrera1 extends javax.swing.JPanel {
     private void initComponents() {
 
         Fondo = new javax.swing.JPanel();
+        Ojo = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         CrearCarreraBoton = new javax.swing.JButton();
         EliminarCarreraBoton = new javax.swing.JButton();
-        Ojo = new javax.swing.JPanel();
 
         setMaximumSize(new java.awt.Dimension(846, 398));
         setMinimumSize(new java.awt.Dimension(846, 398));
 
         Fondo.setMaximumSize(new java.awt.Dimension(846, 398));
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
+
+        Ojo.setBackground(new java.awt.Color(0, 0, 0));
+        Ojo.setMaximumSize(new java.awt.Dimension(443, 75));
+        Ojo.setMinimumSize(new java.awt.Dimension(443, 75));
+
+        javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
+        Ojo.setLayout(OjoLayout);
+        OjoLayout.setHorizontalGroup(
+            OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 443, Short.MAX_VALUE)
+        );
+        OjoLayout.setVerticalGroup(
+            OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 75, Short.MAX_VALUE)
+        );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -165,19 +180,6 @@ public class VistaCarrera1 extends javax.swing.JPanel {
             }
         });
 
-        Ojo.setBackground(new java.awt.Color(0, 0, 0));
-
-        javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
-        Ojo.setLayout(OjoLayout);
-        OjoLayout.setHorizontalGroup(
-            OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        OjoLayout.setVerticalGroup(
-            OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 117, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout FondoLayout = new javax.swing.GroupLayout(Fondo);
         Fondo.setLayout(FondoLayout);
         FondoLayout.setHorizontalGroup(
@@ -187,11 +189,13 @@ public class VistaCarrera1 extends javax.swing.JPanel {
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
                     .addGroup(FondoLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Ojo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(23, 23, 23)
+                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)))
                 .addContainerGap())
         );
         FondoLayout.setVerticalGroup(
@@ -206,9 +210,9 @@ public class VistaCarrera1 extends javax.swing.JPanel {
                             .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
+                        .addGap(37, 37, 37)
                         .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -227,9 +231,9 @@ public class VistaCarrera1 extends javax.swing.JPanel {
             .addGap(0, 410, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 6, Short.MAX_VALUE)
                     .addComponent(Fondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 6, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 

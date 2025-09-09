@@ -15,10 +15,12 @@ import java.util.List;
 public class CarreraService {
     
     public boolean inscribirAlumnoEnCarrera(Alumno alumno, Carrera carrera) {
-        if (!alumno.puedeInscribirseEnOtraCarrera()) {
+        // Verificar que el alumno no tenga carrera activa
+        if (alumno.getCarreraInscripta() != null) {
             return false;
         }
-        
+
+        // Realizar la inscripción
         alumno.inscribirCarrera(carrera);
         return true;
     }

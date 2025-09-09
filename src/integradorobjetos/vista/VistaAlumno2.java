@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -58,7 +59,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
         
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
-        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        Ojo.setPreferredSize(new Dimension(511, 39)); // Alto de 100px para que se vea el ojo
         
         // Cargar datos del alumno
         cargarDatosAlumno();
@@ -249,10 +250,24 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         jScrollPane1.setViewportView(Materias);
 
         InscribirCarreraBoton.setText("Inscribir a Carrera");
+        InscribirCarreraBoton.setFocusable(false);
+        InscribirCarreraBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InscribirCarreraBotonActionPerformed(evt);
+            }
+        });
 
         InscribirMateriaBoton.setText("Inscribir a Materias");
+        InscribirMateriaBoton.setFocusable(false);
+        InscribirMateriaBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InscribirMateriaBotonActionPerformed(evt);
+            }
+        });
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
+        Ojo.setMaximumSize(new java.awt.Dimension(511, 39));
+        Ojo.setMinimumSize(new java.awt.Dimension(511, 39));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);
@@ -319,6 +334,36 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void InscribirCarreraBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InscribirCarreraBotonActionPerformed
+        // Verificar si el alumno ya tiene una carrera activa
+        if (alumno.getCarreraInscripta() != null) {
+            // Mostrar mensaje de error
+            JOptionPane.showMessageDialog(
+                this, 
+                "No puedes inscribirte a dos carreras a la vez. Ya tienes una carrera activa.", 
+                "Error de Inscripción", 
+                JOptionPane.ERROR_MESSAGE
+            );
+            return; // No hacemos nada más
+        }
+        
+        VistaAlumno3 panel = new VistaAlumno3(this.alumno);
+        Fondo.removeAll();
+        Fondo.setLayout(new BorderLayout());
+        Fondo.add(panel, BorderLayout.CENTER);
+        Fondo.revalidate();
+        Fondo.repaint();
+    }//GEN-LAST:event_InscribirCarreraBotonActionPerformed
+
+    private void InscribirMateriaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InscribirMateriaBotonActionPerformed
+        VistaAlumno5 panel = new VistaAlumno5();
+        Fondo.removeAll();
+        Fondo.setLayout(new BorderLayout());
+        Fondo.add(panel, BorderLayout.CENTER);
+        Fondo.revalidate();
+        Fondo.repaint();
+    }//GEN-LAST:event_InscribirMateriaBotonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

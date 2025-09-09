@@ -57,7 +57,7 @@ public class VistaPlanDeEstudio extends javax.swing.JPanel {
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
         
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
-        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        Ojo.setPreferredSize(new Dimension(720, 39)); // Alto de 100px para que se vea el ojo
         
         // Cargar datos en la tabla
         cargarDatosTabla();
@@ -120,6 +120,9 @@ public class VistaPlanDeEstudio extends javax.swing.JPanel {
         Fondo.setMinimumSize(new java.awt.Dimension(846, 398));
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
+        Ojo.setMaximumSize(new java.awt.Dimension(720, 39));
+        Ojo.setMinimumSize(new java.awt.Dimension(720, 39));
+        Ojo.setPreferredSize(new java.awt.Dimension(720, 39));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);

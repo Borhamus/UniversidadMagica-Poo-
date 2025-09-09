@@ -4,20 +4,34 @@
  */
 package integradorobjetos.vista;
 
+import integradorobjetos.controlador.CarreraService;
+import integradorobjetos.modelo.Alumno;
+import integradorobjetos.modelo.Carrera;
+import integradorobjetos.modelo.Facultad;
+import integradorobjetos.vista.OjoMagico;
+import integradorobjetos.vista.Style;
+import integradorobjetos.vista.VistaAlumno2;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
+import javax.swing.JOptionPane;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author Borhamus
  */
 public class VistaAlumno3 extends javax.swing.JPanel {
-
+    private Alumno alumno; //
+    
     /**
      * Creates new form VistaAlumno3
      */
-    public VistaAlumno3() {
+    public VistaAlumno3(Alumno alumno) {
+        this.alumno = alumno;
         initComponents();
         Fondo.setOpaque(false);
         
@@ -37,7 +51,103 @@ public class VistaAlumno3 extends javax.swing.JPanel {
         remove(Fondo);
         add(capaEstrellada, BorderLayout.CENTER);
         
+        // Crear el componente del ojo mágico
+        OjoMagico ojoMagico = new OjoMagico();
+        
+        // Configurar el panel Ojo para que contenga nuestro ojo mágico
+        Ojo.removeAll(); // Limpiar el panel
+        Ojo.setLayout(new BorderLayout()); // Establecer un layout
+        Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
+        
+        // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
+        Ojo.setPreferredSize(new Dimension(433, 100)); // Alto de 100px para que se vea el ojo
+        
+        // Cargar datos del alumno y carreras
+        cargarDatosAlumno();
+        cargarTablaCarreras();
+        
     }
+    
+    private void cargarDatosAlumno() {
+        // 1. Cargar nombre completo del alumno
+        Nombre.setText("Nombre: " + alumno.getNombre());
+        // 2. Cargar DNI con formato especial
+        Dni.setText("DNI: " + alumno.getDni() );
+        // 3. Cargar carreras finalizadas
+        StringBuilder carrerasFinalizadas = new StringBuilder("Carreras Finalizadas: ");
+        if (alumno.getCarrerasTerminadas().isEmpty()) {
+            carrerasFinalizadas.append("Ninguna");
+        } else {
+            for (Carrera carrera : alumno.getCarrerasTerminadas()) {
+                carrerasFinalizadas.append(carrera.getNombre()).append(", ");
+            }
+            // Eliminar la última coma y espacio
+            carrerasFinalizadas.setLength(carrerasFinalizadas.length() - 2);
+        }
+        CF.setText(carrerasFinalizadas.toString());
+        // 4. Cargar carrera cursando actualmente
+        String textoCarreraActiva = "Carrera Activa: ";
+        if (alumno.getCarreraInscripta() != null) {
+            textoCarreraActiva += alumno.getCarreraInscripta().getNombre();
+        } else {
+            textoCarreraActiva += "Sin Carrera";
+        }
+        CC.setText(textoCarreraActiva);
+    }
+    
+    // Nuevo método para cargar la tabla de carreras
+    private void cargarTablaCarreras() {
+        // Obtener todas las carreras disponibles (usando Facultad)
+        Facultad facultad = Facultad.getInstance();
+        List<Carrera> carreras = facultad.getCarreras(); // Necesitarás este método en Facultad
+        
+        // Crear modelo para la tabla
+        CarreraTableModel modelo = new CarreraTableModel(carreras);
+        TablaCarreras.setModel(modelo); // Asumiendo que tienes una tabla llamada TablaCarreras
+        
+        // Configurar columnas
+        TablaCarreras.getColumnModel().getColumn(0).setPreferredWidth(400); // Nombre de la carrera
+    }
+    
+    // Modelo de tabla para carreras
+    class CarreraTableModel extends AbstractTableModel {
+        private List<Carrera> carreras;
+        private String[] columnNames = {"Nombre de la Carrera"};
+        
+        public CarreraTableModel(List<Carrera> carreras) {
+            this.carreras = new ArrayList<>(carreras);
+        }
+        
+        @Override
+        public int getRowCount() {
+            return carreras.size();
+        }
+        
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+        
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            Carrera carrera = carreras.get(rowIndex);
+            return carrera.getNombre();
+        }
+        
+        @Override
+        public String getColumnName(int column) {
+            return columnNames[column];
+        }
+        
+        // MÉTODO FALTANTE: Agregar este método para obtener la carrera en una fila específica
+        public Carrera getCarreraAt(int row) {
+            if (row >= 0 && row < carreras.size()) {
+                return carreras.get(row);
+            }
+            return null;
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -55,7 +165,7 @@ public class VistaAlumno3 extends javax.swing.JPanel {
         CF = new javax.swing.JTextField();
         CC = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TablaCarreras = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         Ojo = new javax.swing.JPanel();
 
@@ -102,7 +212,7 @@ public class VistaAlumno3 extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TablaCarreras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -113,9 +223,10 @@ public class VistaAlumno3 extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TablaCarreras);
 
         jButton1.setText("Inscribir a Carrera");
+        jButton1.setFocusable(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -194,7 +305,53 @@ public class VistaAlumno3 extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // 1. Verificar si hay una carrera seleccionada
+        int selectedRow = TablaCarreras.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "Primero debe seleccionar una carrera", 
+                "Selección requerida", 
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        
+        // 2. Obtener la carrera seleccionada
+        CarreraTableModel modelo = (CarreraTableModel) TablaCarreras.getModel();
+        Carrera carreraSeleccionada = modelo.getCarreraAt(selectedRow);
+        
+        // 3. Usar CarreraService para inscribir al alumno
+        CarreraService service = new CarreraService();
+        boolean inscripcionExitosa = service.inscribirAlumnoEnCarrera(alumno, carreraSeleccionada);
+        
+        // 4. Manejar el resultado
+        if (inscripcionExitosa) {
+            // Mostrar mensaje de éxito
+            JOptionPane.showMessageDialog(
+                this, 
+                "Carrera Inscripta: " + carreraSeleccionada.getNombre(), 
+                "Inscripción Exitosa", 
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            
+            // Volver a VistaAlumno2 con el alumno actualizado
+            VistaAlumno2 panel = new VistaAlumno2(alumno);
+            Fondo.removeAll();
+            Fondo.setLayout(new BorderLayout());
+            Fondo.add(panel, BorderLayout.CENTER);
+            Fondo.revalidate();
+            Fondo.repaint();
+        } else {
+            // Mostrar mensaje de error
+            JOptionPane.showMessageDialog(
+                this, 
+                "No se pudo realizar la inscripción. Verifica que cumplas con los requisitos.", 
+                "Error de Inscripción", 
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
@@ -206,8 +363,8 @@ public class VistaAlumno3 extends javax.swing.JPanel {
     private javax.swing.JPanel MarcoDeTexto;
     private javax.swing.JTextField Nombre;
     private javax.swing.JPanel Ojo;
+    private javax.swing.JTable TablaCarreras;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
