@@ -16,6 +16,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
@@ -124,7 +126,7 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         // Crear el modelo de tabla para las materias
         MateriasCarreraTableModel modelo = new MateriasCarreraTableModel(carrera.getMaterias());
         jTable1.setModel(modelo);
-        
+
         // Configurar columnas
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(200); // Nombre de Materia
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(100); // Cuatrimestre
@@ -132,7 +134,7 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(100); // Carga Horaria
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(200); // Correlativas
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(80);  // Editar
-        
+
         // Configurar renderizador para la columna "Editar"
         jTable1.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
@@ -146,6 +148,29 @@ public class VistaCarrera3 extends javax.swing.JPanel {
                     label.setHorizontalAlignment(SwingConstants.CENTER);
                 }
                 return c;
+            }
+        });
+
+        // Agregar MouseListener para manejar clics en la columna "Editar"
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = jTable1.columnAtPoint(e.getPoint());
+                int row = jTable1.rowAtPoint(e.getPoint());
+                // Verificamos si se hizo clic en la columna "Editar" (índice 5)
+                if (column == 5) {
+                    // Obtenemos la materia de la fila seleccionada
+                    MateriasCarreraTableModel modelo = (MateriasCarreraTableModel) jTable1.getModel();
+                    Materia materiaSeleccionada = modelo.getMateriaAt(row);
+                    // Creamos la VistaMateria1 y le pasamos la materia y la carrera
+                    VistaMateria1 vistaMateria1 = new VistaMateria1(materiaSeleccionada, carrera);
+                    // Reemplazamos el contenido del panel Fondo con esta nueva vista
+                    Fondo.removeAll();
+                    Fondo.setLayout(new BorderLayout());
+                    Fondo.add(vistaMateria1, BorderLayout.CENTER);
+                    Fondo.revalidate();
+                    Fondo.repaint();
+                }
             }
         });
     }
@@ -530,7 +555,7 @@ public class VistaCarrera3 extends javax.swing.JPanel {
     }//GEN-LAST:event_OptativasActionPerformed
 
     private void CrearMateriaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearMateriaBotonActionPerformed
-        VistaMateria1 panel = new VistaMateria1();
+        VistaMateria1 panel = new VistaMateria1(carrera);
         Fondo.removeAll();
         Fondo.setLayout(new BorderLayout());
         Fondo.add(panel, BorderLayout.CENTER);
