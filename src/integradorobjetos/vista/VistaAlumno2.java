@@ -59,7 +59,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
         
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
-        Ojo.setPreferredSize(new Dimension(511, 39)); // Alto de 100px para que se vea el ojo
+        Ojo.setPreferredSize(new Dimension(200, 40)); // Alto de 100px para que se vea el ojo
         
         // Cargar datos del alumno
         cargarDatosAlumno();
@@ -266,18 +266,19 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         });
 
         Ojo.setBackground(new java.awt.Color(0, 0, 0));
-        Ojo.setMaximumSize(new java.awt.Dimension(511, 39));
-        Ojo.setMinimumSize(new java.awt.Dimension(511, 39));
+        Ojo.setMaximumSize(new java.awt.Dimension(200, 40));
+        Ojo.setMinimumSize(new java.awt.Dimension(200, 40));
+        Ojo.setPreferredSize(new java.awt.Dimension(200, 40));
 
         javax.swing.GroupLayout OjoLayout = new javax.swing.GroupLayout(Ojo);
         Ojo.setLayout(OjoLayout);
         OjoLayout.setHorizontalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 511, Short.MAX_VALUE)
+            .addGap(0, 200, Short.MAX_VALUE)
         );
         OjoLayout.setVerticalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 39, Short.MAX_VALUE)
+            .addGap(0, 40, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout FondoLayout = new javax.swing.GroupLayout(Fondo);
@@ -294,7 +295,8 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(InscribirMateriaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(151, 151, 151)))
                 .addContainerGap())
         );
         FondoLayout.setVerticalGroup(
@@ -326,7 +328,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 398, Short.MAX_VALUE)
+            .addGap(0, 399, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -357,7 +359,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
     }//GEN-LAST:event_InscribirCarreraBotonActionPerformed
 
     private void InscribirMateriaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InscribirMateriaBotonActionPerformed
-        VistaAlumno5 panel = new VistaAlumno5();
+        VistaAlumno5 panel = new VistaAlumno5(this.alumno);
         Fondo.removeAll();
         Fondo.setLayout(new BorderLayout());
         Fondo.add(panel, BorderLayout.CENTER);
