@@ -29,9 +29,15 @@ public class PlanA extends Plan {
         return true;
     }
     
+    // PlanA - Solo requiere cursadas aprobadas de correlativas
     @Override
     public boolean puedePromocionar(Alumno alumno, Materia materia) {
-        // Para promocionar en Plan A, se aplican las mismas condiciones que para cursar
-        return puedeCursar(alumno, materia);
+        // Verificar que el alumno tenga aprobadas las cursadas de todas las correlativas
+        for (Materia correlativa : materia.getCorrelativas()) {
+            if (!alumno.tieneCursadaAprobada(correlativa)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

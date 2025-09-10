@@ -35,22 +35,38 @@ public class PlanC extends Plan {
         return verificarFinalesCuatrimestresPrevios(alumno, cuatrimestreMinimo, cuatrimestreActual - 1);
     }
     
+    // PlanC - Cursadas de correlativas + finales de 5 cuatrimestres previos
     @Override
     public boolean puedePromocionar(Alumno alumno, Materia materia) {
-        // Para promocionar en Plan C, se aplican las mismas condiciones que para cursar
-        return puedeCursar(alumno, materia);
-    }
-    
-    private boolean verificarFinalesCuatrimestresPrevios(Alumno alumno, int cuatriMin, int cuatriMax) {
-        // Obtener todas las materias de la carrera del alumno en el rango de cuatrimestres
-        List<Materia> materiasPrevias = alumno.getCarreraInscripta().materiasDelPeriodo(cuatriMin, cuatriMax + 1);
-        
-        // Verificar que tenga aprobado el final de cada una
-        for (Materia materiaPrevia : materiasPrevias) {
-            if (!alumno.tieneFinalAprobado(materiaPrevia)) {
+        // Verificar correlativas (igual que PlanA)
+        for (Materia correlativa : materia.getCorrelativas()) {
+            if (!alumno.tieneCursadaAprobada(correlativa)) {
                 return false;
             }
         }
+
+        // Verificar finales de 5 cuatrimestres previos
+        int cuatrimestreActual = materia.getCuatrimestre();
+        int cuatrimestreMinimo = Math.max(1, cuatrimestreActual - 5);
+
+        return verificarFinalesCuatrimestresPrevios(alumno, cuatrimestreMinimo, cuatrimestreActual - 1);
+    }
+    
+    private boolean verificarFinalesCuatrimestresPrevios(Alumno alumno, int cuatriMin, int cuatriMax) {
+    // Si no hay cuatrimestres previos, no hay requisitos
+    if (cuatriMin > cuatriMax) {
         return true;
     }
+    
+    // Obtener todas las materias de la carrera del alumno en el rango de cuatrimestres
+    List<Materia> materiasPrevias = alumno.getCarreraInscripta().materiasDelPeriodo(cuatriMin, cuatriMax + 1);
+    
+    // Verificar que tenga aprobado el final de cada una
+    for (Materia materiaPrevia : materiasPrevias) {
+        if (!alumno.tieneFinalAprobado(materiaPrevia)) {
+            return false;
+        }
+    }
+    return true;
+}
 }

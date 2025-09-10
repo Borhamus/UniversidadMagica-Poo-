@@ -19,6 +19,7 @@ public class Materia {
     private String profesor;
     private boolean esOptativa;
     private List<Materia> correlativas;
+    private boolean esPromocionable;
     
     // Constructor
     public Materia(String nombre, String contenido, int cargaHoraria, int cuatrimestre, String profesor) {
@@ -36,6 +37,14 @@ public class Materia {
         if (!correlativas.contains(materia)) {
             correlativas.add(materia);
         }
+    }
+    
+    public boolean esPromocionable() {
+        return esPromocionable;
+    }
+    
+    public void setPromocionable(boolean promocionable) {
+        this.esPromocionable = promocionable;
     }
     
     public void setOptativa(boolean esOptativa) {

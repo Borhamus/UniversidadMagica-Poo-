@@ -70,10 +70,10 @@ public class Carrera {
     }
     
     
-    public List<Materia> materiasDelPeriodo(int cuatrimestreMin, int cuatrimestreMax) {
+    public List<Materia> materiasDelPeriodo(int min, int max) {
         List<Materia> resultado = new ArrayList<>();
         for (Materia materia : materiasDeLaCarrera) {
-            if (materia.getCuatrimestre() >= cuatrimestreMin && materia.getCuatrimestre() <= cuatrimestreMax) {
+            if (materia.getCuatrimestre() >= min && materia.getCuatrimestre() < max) {
                 resultado.add(materia);
             }
         }

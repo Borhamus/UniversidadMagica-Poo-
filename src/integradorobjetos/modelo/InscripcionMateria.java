@@ -26,13 +26,18 @@ public class InscripcionMateria {
         this.estado = EstadoInscripcion.CURSADA_APROBADA;
     }
     
+    public void promocionar() {
+        if (estado == EstadoInscripcion.INSCRIPTO) {
+            this.estado = EstadoInscripcion.PROMOCIONADO;
+        } else {
+            throw new IllegalStateException("Solo se puede promocionar desde el estado INSCRIPTO");
+        }
+    }
+    
     public void aprobarFinal() {
         this.estado = EstadoInscripcion.FINAL_APROBADO;
     }
     
-    public void promocionar() {
-        this.estado = EstadoInscripcion.PROMOCIONADO;
-    }
     
     // Getters
     public Alumno getAlumno() {

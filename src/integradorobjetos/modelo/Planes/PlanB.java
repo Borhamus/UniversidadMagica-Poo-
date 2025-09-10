@@ -29,9 +29,15 @@ public class PlanB extends Plan {
         return true;
     }
     
+    // PlanB - Requiere finales aprobados de correlativas
     @Override
     public boolean puedePromocionar(Alumno alumno, Materia materia) {
-        // Para promocionar en Plan B, se aplican las mismas condiciones que para cursar
-        return puedeCursar(alumno, materia);
+        // Verificar que el alumno tenga aprobados los finales de todas las correlativas
+        for (Materia correlativa : materia.getCorrelativas()) {
+            if (!alumno.tieneFinalAprobado(correlativa)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

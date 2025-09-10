@@ -35,16 +35,32 @@ public class PlanE extends Plan {
         return verificarFinalesCuatrimestresPrevios(alumno, cuatrimestreMinimo, cuatrimestreActual - 1);
     }
     
+    // PlanE - Finales de correlativas + finales de 3 cuatrimestres previos
     @Override
     public boolean puedePromocionar(Alumno alumno, Materia materia) {
-        // Para promocionar en Plan E, se aplican las mismas condiciones que para cursar
-        return puedeCursar(alumno, materia);
+        // Verificar correlativas (igual que PlanB)
+        for (Materia correlativa : materia.getCorrelativas()) {
+            if (!alumno.tieneFinalAprobado(correlativa)) {
+                return false;
+            }
+        }
+
+        // Verificar finales de 3 cuatrimestres previos
+        int cuatrimestreActual = materia.getCuatrimestre();
+        int cuatrimestreMinimo = Math.max(1, cuatrimestreActual - 3);
+
+        return verificarFinalesCuatrimestresPrevios(alumno, cuatrimestreMinimo, cuatrimestreActual - 1);
     }
     
     private boolean verificarFinalesCuatrimestresPrevios(Alumno alumno, int cuatriMin, int cuatriMax) {
+        // Si no hay cuatrimestres previos, no hay requisitos
+        if (cuatriMin > cuatriMax) {
+            return true;
+        }
+
         // Obtener todas las materias de la carrera del alumno en el rango de cuatrimestres
         List<Materia> materiasPrevias = alumno.getCarreraInscripta().materiasDelPeriodo(cuatriMin, cuatriMax + 1);
-        
+
         // Verificar que tenga aprobado el final de cada una
         for (Materia materiaPrevia : materiasPrevias) {
             if (!alumno.tieneFinalAprobado(materiaPrevia)) {

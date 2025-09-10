@@ -268,7 +268,49 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         }
     }
 
+    private boolean validarCambioEstado(InscripcionMateria inscripcion, EstadoInscripcion nuevoEstado) {
+        EstadoInscripcion estadoActual = inscripcion.getEstado();
+        Materia materia = inscripcion.getMateria();
+        Alumno alumno = inscripcion.getAlumno();
+        Carrera carrera = alumno.getCarreraInscripta();
 
+        // Validar reglas de progresión de estados
+        if (estadoActual == EstadoInscripcion.INSCRIPTO) {
+            if (nuevoEstado == EstadoInscripcion.CURSADA_APROBADA) {
+                inscripcion.aprobarCursada();
+                return true;
+            } else if (nuevoEstado == EstadoInscripcion.PROMOCIONADO) {
+                // Verificar si la materia permite promoción
+                if (!materia.esPromocionable()) {
+                    JOptionPane.showMessageDialog(VistaAlumno2.this, 
+                        "Esta materia no permite promoción directa", 
+                        "Promoción no permitida", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+
+                // Verificar condiciones del plan de estudios para promocionar
+                if (carrera.getPlanDeEstudio().puedePromocionar(alumno, materia)) {
+                    inscripcion.promocionar(); // Nuevo método que establece directamente PROMOCIONADO
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(VistaAlumno2.this, 
+                        "No cumples con los requisitos para promocionar esta materia según el plan de estudios", 
+                        "Requisitos insuficientes", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+        } else if (estadoActual == EstadoInscripcion.CURSADA_APROBADA) {
+            if (nuevoEstado == EstadoInscripcion.FINAL_APROBADO) {
+                inscripcion.aprobarFinal();
+                return true;
+            }
+        }
+
+        // No se permiten otros cambios de estado
+        return false;
+    }
     
     
     /**
