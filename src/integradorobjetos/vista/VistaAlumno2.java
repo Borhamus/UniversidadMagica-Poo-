@@ -161,8 +161,8 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                     return "Cursada Aprobada";
                 case FINAL_APROBADO:
                     return "Final Aprobado";
-                case REPROBADO:
-                    return "Reprobado";
+                case PROMOCIONADO:
+                    return "Promocionado";
                 default:
                     return "Desconocido";
             }

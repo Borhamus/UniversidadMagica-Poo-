@@ -30,8 +30,8 @@ public class InscripcionMateria {
         this.estado = EstadoInscripcion.FINAL_APROBADO;
     }
     
-    public void reprobar() {
-        this.estado = EstadoInscripcion.REPROBADO;
+    public void promocionar() {
+        this.estado = EstadoInscripcion.PROMOCIONADO;
     }
     
     // Getters

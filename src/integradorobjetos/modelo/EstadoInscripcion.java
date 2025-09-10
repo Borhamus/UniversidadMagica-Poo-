@@ -12,5 +12,5 @@ public enum EstadoInscripcion {
     INSCRIPTO,
     CURSADA_APROBADA,
     FINAL_APROBADO,
-    REPROBADO
+    PROMOCIONADO
 }
