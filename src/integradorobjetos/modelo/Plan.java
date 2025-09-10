@@ -16,8 +16,10 @@ public abstract class Plan {
     }
     
     public abstract boolean puedeCursar(Alumno alumno, Materia materia);
+    public abstract boolean puedePromocionar(Alumno alumno, Materia materia);
     
     public String getNombre() {
         return nombre;
     }
 }
+

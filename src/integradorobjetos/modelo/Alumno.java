@@ -36,6 +36,27 @@ public class Alumno {
         this.carreraInscripta = carrera;
     }
     
+    public boolean tieneCursadaAprobada(Materia materia) {
+        for (InscripcionMateria inscripcion : inscripciones) {
+            if (inscripcion.getMateria().equals(materia)) {
+                return inscripcion.getEstado() == EstadoInscripcion.CURSADA_APROBADA ||
+                       inscripcion.getEstado() == EstadoInscripcion.FINAL_APROBADO ||
+                       inscripcion.getEstado() == EstadoInscripcion.PROMOCIONADO;
+            }
+        }
+        return false;
+    }
+    
+    public boolean tieneFinalAprobado(Materia materia) {
+        for (InscripcionMateria inscripcion : inscripciones) {
+            if (inscripcion.getMateria().equals(materia)) {
+                return inscripcion.getEstado() == EstadoInscripcion.FINAL_APROBADO ||
+                       inscripcion.getEstado() == EstadoInscripcion.PROMOCIONADO;
+            }
+        }
+        return false;
+    }
+    
     // Método para terminar la carrera actual
     public void terminarCarreraActual() {
         if (carreraInscripta == null) {
@@ -72,25 +93,6 @@ public class Alumno {
         inscripciones.add(inscripcion);
     }
     
-    public boolean tieneCursadaAprobada(Materia materia) {
-        for (InscripcionMateria inscripcion : inscripciones) {
-            if (inscripcion.getMateria().equals(materia) && 
-                inscripcion.getEstado() == EstadoInscripcion.CURSADA_APROBADA) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public boolean tieneFinalAprobado(Materia materia) {
-        for (InscripcionMateria inscripcion : inscripciones) {
-            if (inscripcion.getMateria().equals(materia) && 
-                inscripcion.getEstado() == EstadoInscripcion.FINAL_APROBADO) {
-                return true;
-            }
-        }
-        return false;
-    }
     
     // Getters & Setters
     public String getNombre() {

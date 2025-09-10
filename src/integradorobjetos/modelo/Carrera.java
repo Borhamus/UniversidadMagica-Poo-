@@ -17,6 +17,9 @@ public class Carrera {
     private Plan planDeEstudio;
     private List<Materia> materiasDeLaCarrera;
     
+    
+    
+    
     // Constructor
     public Carrera(String nombre, int optativasMinimas) {
         this.nombre = nombre;
@@ -67,11 +70,10 @@ public class Carrera {
     }
     
     
-    public List<Materia> materiasDelPeriodo(int cuatriMin, int cuatriMax) {
+    public List<Materia> materiasDelPeriodo(int cuatrimestreMin, int cuatrimestreMax) {
         List<Materia> resultado = new ArrayList<>();
         for (Materia materia : materiasDeLaCarrera) {
-            int cuatrimestre = materia.getCuatrimestre();
-            if (cuatrimestre >= cuatriMin && cuatrimestre < cuatriMax) {
+            if (materia.getCuatrimestre() >= cuatrimestreMin && materia.getCuatrimestre() <= cuatrimestreMax) {
                 resultado.add(materia);
             }
         }
@@ -92,6 +94,8 @@ public class Carrera {
             }
         }
     }
+    
+    
     
     // Patrón Strategy
     public boolean puedeCursar(Alumno alumno, Materia materia) {

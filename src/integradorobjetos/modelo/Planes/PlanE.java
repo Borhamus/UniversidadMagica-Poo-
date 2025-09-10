@@ -35,6 +35,12 @@ public class PlanE extends Plan {
         return verificarFinalesCuatrimestresPrevios(alumno, cuatrimestreMinimo, cuatrimestreActual - 1);
     }
     
+    @Override
+    public boolean puedePromocionar(Alumno alumno, Materia materia) {
+        // Para promocionar en Plan E, se aplican las mismas condiciones que para cursar
+        return puedeCursar(alumno, materia);
+    }
+    
     private boolean verificarFinalesCuatrimestresPrevios(Alumno alumno, int cuatriMin, int cuatriMax) {
         // Obtener todas las materias de la carrera del alumno en el rango de cuatrimestres
         List<Materia> materiasPrevias = alumno.getCarreraInscripta().materiasDelPeriodo(cuatriMin, cuatriMax + 1);

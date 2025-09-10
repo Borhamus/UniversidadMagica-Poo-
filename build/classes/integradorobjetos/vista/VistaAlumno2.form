@@ -39,7 +39,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="399" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="409" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -67,15 +67,18 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="MarcoDeTexto" alignment="0" max="32767" attributes="0"/>
                       <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="InscribirCarreraBoton" min="-2" pref="146" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="InscribirMateriaBoton" min="-2" pref="146" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="395" max="32767" attributes="0"/>
                           <Component id="Ojo" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="151" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="MarcoDeTexto" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -116,10 +119,14 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="Nombre" alignment="0" max="32767" attributes="0"/>
-                          <Component id="Dni" alignment="0" pref="822" max="32767" attributes="0"/>
-                          <Component id="CF" alignment="0" pref="822" max="32767" attributes="0"/>
-                          <Component id="CC" alignment="0" pref="822" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="CC" min="-2" pref="519" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="Plan" pref="296" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="CF" alignment="0" max="32767" attributes="0"/>
+                          <Component id="Dni" alignment="0" max="32767" attributes="0"/>
+                          <Component id="Nombre" alignment="1" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -135,8 +142,11 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="CF" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="CC" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="CC" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="Plan" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="16" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -160,6 +170,11 @@
             <Component class="javax.swing.JTextField" name="CC">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Carrera en Curso:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="Plan">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Plan de Estudio: "/>
               </Properties>
             </Component>
           </SubComponents>

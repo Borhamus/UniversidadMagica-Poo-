@@ -28,4 +28,10 @@ public class PlanA extends Plan {
         }
         return true;
     }
+    
+    @Override
+    public boolean puedePromocionar(Alumno alumno, Materia materia) {
+        // Para promocionar en Plan A, se aplican las mismas condiciones que para cursar
+        return puedeCursar(alumno, materia);
+    }
 }

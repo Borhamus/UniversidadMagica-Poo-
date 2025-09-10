@@ -9,11 +9,17 @@ import integradorobjetos.modelo.Carrera;
 import integradorobjetos.modelo.EstadoInscripcion;
 import integradorobjetos.modelo.InscripcionMateria;
 import integradorobjetos.modelo.Materia;
+import integradorobjetos.modelo.Plan;
+import integradorobjetos.vista.OjoMagico;
 import integradorobjetos.vista.Style;
+import integradorobjetos.vista.VistaAlumno3;
+import integradorobjetos.vista.VistaAlumno5;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
 import javax.swing.JOptionPane;
@@ -27,7 +33,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public class VistaAlumno2 extends javax.swing.JPanel {
     private Alumno alumno;
-
     
     public VistaAlumno2(Alumno alumno) {
         this.alumno = alumno;
@@ -74,7 +79,6 @@ public class VistaAlumno2 extends javax.swing.JPanel {
 
         // 3. Cargar carreras finalizadas
         StringBuilder carrerasFinalizadas = new StringBuilder("Carreras Finalizadas: ");
-
         if (alumno.getCarrerasTerminadas().isEmpty()) {
             carrerasFinalizadas.append("Ninguna");
         } else {
@@ -84,7 +88,6 @@ public class VistaAlumno2 extends javax.swing.JPanel {
             // Eliminar la última coma y espacio
             carrerasFinalizadas.setLength(carrerasFinalizadas.length() - 2);
         }
-
         CF.setText(carrerasFinalizadas.toString());
 
         // 4. Cargar carrera cursando actualmente
@@ -94,10 +97,20 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         } else {
             textoCarreraActiva += "Sin Carrera";
         }
-
         CC.setText(textoCarreraActiva);
 
-        // 5. Cargar tabla de materias
+        // 5. Cargar plan de estudios con el formato completo
+        String textoPlan = "Plan De Estudio: ";
+        if (alumno.getCarreraInscripta() != null && alumno.getCarreraInscripta().getPlanDeEstudio() != null) {
+            // Obtener el nombre simple de la clase del plan (PlanA, PlanB, etc.)
+            String nombrePlan = alumno.getCarreraInscripta().getPlanDeEstudio().getClass().getSimpleName();
+            textoPlan += nombrePlan;
+        } else {
+            textoPlan += "Sin plan";
+        }
+        Plan.setText(textoPlan);
+
+        // 6. Cargar tabla de materias
         cargarTablaMaterias();
     }
     
@@ -110,6 +123,16 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         Materias.getColumnModel().getColumn(0).setPreferredWidth(200); // Materias Inscriptas
         Materias.getColumnModel().getColumn(1).setPreferredWidth(100); // Cuatrimestre
         Materias.getColumnModel().getColumn(2).setPreferredWidth(150); // Estado
+        
+        // Configurar editor para la columna Estado
+        JComboBox<String> comboEstados = new JComboBox<>();
+        comboEstados.addItem("Inscripto");
+        comboEstados.addItem("Cursada Aprobada");
+        comboEstados.addItem("Final Aprobado");
+        comboEstados.addItem("Promocionado");
+        
+        DefaultCellEditor editor = new DefaultCellEditor(comboEstados);
+        Materias.getColumnModel().getColumn(2).setCellEditor(editor);
     }
     
     // Modelo de tabla para las inscripciones a materias
@@ -149,8 +172,35 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         }
         
         @Override
+        public void setValueAt(Object value, int rowIndex, int columnIndex) {
+            if (columnIndex == 2) { // Solo la columna Estado es editable
+                InscripcionMateria inscripcion = inscripciones.get(rowIndex);
+                EstadoInscripcion nuevoEstado = convertirStringToEstado((String) value);
+                
+                if (nuevoEstado != null) {
+                    // Validar si el cambio de estado es válido según las reglas
+                    if (validarCambioEstado(inscripcion, nuevoEstado)) {
+                        fireTableCellUpdated(rowIndex, columnIndex);
+                    } else {
+                        JOptionPane.showMessageDialog(VistaAlumno2.this, 
+                            "No se puede cambiar al estado " + convertirEstadoToString(nuevoEstado) + 
+                            " porque no cumple con las condiciones requeridas", 
+                            "Cambio de estado inválido", 
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }
+        
+        @Override
         public String getColumnName(int column) {
             return columnNames[column];
+        }
+        
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            // Solo la columna Estado es editable
+            return columnIndex == 2;
         }
         
         private String convertirEstadoToString(EstadoInscripcion estado) {
@@ -167,8 +217,58 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                     return "Desconocido";
             }
         }
-    
+        
+        private EstadoInscripcion convertirStringToEstado(String estadoStr) {
+            switch (estadoStr) {
+                case "Inscripto":
+                    return EstadoInscripcion.INSCRIPTO;
+                case "Cursada Aprobada":
+                    return EstadoInscripcion.CURSADA_APROBADA;
+                case "Final Aprobado":
+                    return EstadoInscripcion.FINAL_APROBADO;
+                case "Promocionado":
+                    return EstadoInscripcion.PROMOCIONADO;
+                default:
+                    return null;
+            }
+        }
+        
+        private boolean validarCambioEstado(InscripcionMateria inscripcion, EstadoInscripcion nuevoEstado) {
+            EstadoInscripcion estadoActual = inscripcion.getEstado();
+            Materia materia = inscripcion.getMateria();
+            Alumno alumno = inscripcion.getAlumno();
+            Carrera carrera = alumno.getCarreraInscripta();
+            
+            // Validar reglas de progresión de estados
+            if (estadoActual == EstadoInscripcion.INSCRIPTO) {
+                // Desde Inscripto puede pasar a Cursada Aprobada o Promocionado
+                if (nuevoEstado == EstadoInscripcion.CURSADA_APROBADA) {
+                    inscripcion.aprobarCursada();
+                    return true;
+                } else if (nuevoEstado == EstadoInscripcion.PROMOCIONADO) {
+                    // Para promocionar, debe cumplir con las condiciones del plan de estudios
+                    if (carrera.getPlanDeEstudio().puedePromocionar(alumno, materia)) {
+                        inscripcion.aprobarCursada();
+                        inscripcion.aprobarFinal();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            } else if (estadoActual == EstadoInscripcion.CURSADA_APROBADA) {
+                // Desde Cursada Aprobada puede pasar a Final Aprobado
+                if (nuevoEstado == EstadoInscripcion.FINAL_APROBADO) {
+                    inscripcion.aprobarFinal();
+                    return true;
+                }
+            }
+            
+            // No se permiten otros cambios de estado
+            return false;
+        }
     }
+
+
     
     
     /**
@@ -186,6 +286,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         Dni = new javax.swing.JTextField();
         CF = new javax.swing.JTextField();
         CC = new javax.swing.JTextField();
+        Plan = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         Materias = new javax.swing.JTable();
         InscribirCarreraBoton = new javax.swing.JButton();
@@ -209,6 +310,8 @@ public class VistaAlumno2 extends javax.swing.JPanel {
 
         CC.setText("Carrera en Curso:");
 
+        Plan.setText("Plan de Estudio: ");
+
         javax.swing.GroupLayout MarcoDeTextoLayout = new javax.swing.GroupLayout(MarcoDeTexto);
         MarcoDeTexto.setLayout(MarcoDeTextoLayout);
         MarcoDeTextoLayout.setHorizontalGroup(
@@ -216,10 +319,13 @@ public class VistaAlumno2 extends javax.swing.JPanel {
             .addGroup(MarcoDeTextoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(MarcoDeTextoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Nombre)
-                    .addComponent(Dni, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                    .addComponent(CF, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                    .addComponent(CC, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE))
+                    .addGroup(MarcoDeTextoLayout.createSequentialGroup()
+                        .addComponent(CC, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Plan, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE))
+                    .addComponent(CF)
+                    .addComponent(Dni)
+                    .addComponent(Nombre, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         MarcoDeTextoLayout.setVerticalGroup(
@@ -232,8 +338,10 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(CF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(CC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(MarcoDeTextoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Plan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         Materias.setModel(new javax.swing.table.DefaultTableModel(
@@ -288,15 +396,17 @@ public class VistaAlumno2 extends javax.swing.JPanel {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(MarcoDeTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
                     .addGroup(FondoLayout.createSequentialGroup()
                         .addComponent(InscribirCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(InscribirMateriaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 395, Short.MAX_VALUE)
                         .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(151, 151, 151)))
+                        .addGap(151, 151, 151))
+                    .addGroup(FondoLayout.createSequentialGroup()
+                        .addComponent(MarcoDeTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         FondoLayout.setVerticalGroup(
@@ -328,7 +438,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 399, Short.MAX_VALUE)
+            .addGap(0, 409, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -359,7 +469,19 @@ public class VistaAlumno2 extends javax.swing.JPanel {
     }//GEN-LAST:event_InscribirCarreraBotonActionPerformed
 
     private void InscribirMateriaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InscribirMateriaBotonActionPerformed
-        VistaAlumno5 panel = new VistaAlumno5(this.alumno);
+        // Verificar si el alumno tiene una carrera activa
+        if (alumno.getCarreraInscripta() == null) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "No tienes una carrera activa. Debes inscribirte a una carrera primero.", 
+                "Sin Carrera Activa", 
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // Si tiene carrera activa, ir a VistaAlumno5
+        VistaAlumno5 panel = new VistaAlumno5(alumno);
         Fondo.removeAll();
         Fondo.setLayout(new BorderLayout());
         Fondo.add(panel, BorderLayout.CENTER);
@@ -379,6 +501,7 @@ public class VistaAlumno2 extends javax.swing.JPanel {
     private javax.swing.JTable Materias;
     private javax.swing.JTextField Nombre;
     private javax.swing.JPanel Ojo;
+    private javax.swing.JTextField Plan;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
