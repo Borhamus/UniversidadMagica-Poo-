@@ -505,10 +505,10 @@ public class VistaAlumno5 extends javax.swing.JPanel {
     private boolean verificarCondicionesPlan(Materia materia) {
         Carrera carrera = alumno.getCarreraInscripta();
         Plan plan = carrera.getPlanDeEstudio();
-        
+
         // Si la materia no tiene correlativas, solo verificamos condiciones de cuatrimestres previos si aplica
         boolean tieneCorrelativas = materia.getCorrelativas() != null && !materia.getCorrelativas().isEmpty();
-        
+
         // Verificar condiciones según el tipo de plan
         if (plan instanceof PlanA) {
             return verificarPlanA(materia);
@@ -521,10 +521,10 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         } else if (plan instanceof PlanE) {
             return tieneCorrelativas ? verificarPlanE(materia) : true;
         }
-        
+
         return false; // Plan no reconocido
     }
-    
+
     private boolean verificarPlanA(Materia materia) {
         // Verificar correlativas: CURSADA_APROBADA, FINAL_APROBADO o PROMOCIONADO
         for (Materia correlativa : materia.getCorrelativas()) {
@@ -537,7 +537,7 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         }
         return true;
     }
-    
+
     private boolean verificarPlanB(Materia materia) {
         // Verificar correlativas: FINAL_APROBADO o PROMOCIONADO
         for (Materia correlativa : materia.getCorrelativas()) {
@@ -549,41 +549,53 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         }
         return true;
     }
-    
+
     private boolean verificarPlanC(Materia materia) {
         // 1. Verificar correlativas (igual que Plan A)
         if (!verificarPlanA(materia)) {
             return false;
         }
-        
-        // 2. Verificar finales de materias de 5 cuatrimestres previos
-        return verificarFinalesCuatrimestresPrevios(materia, 5);
+
+        // 2. Verificar finales de materias de 5 cuatrimestres previos SOLO si hay suficientes cuatrimestres
+        int cuatriActual = materia.getCuatrimestre();
+        if (cuatriActual > 5) { // Solo verificar si hay al menos 5 cuatrimestres previos
+            return verificarFinalesCuatrimestresPrevios(materia, 5);
+        }
+        return true; // Si no hay suficientes cuatrimestres, no se verifica
     }
-    
+
     private boolean verificarPlanD(Materia materia) {
         // 1. Verificar correlativas (igual que Plan A)
         if (!verificarPlanA(materia)) {
             return false;
         }
-        
-        // 2. Verificar finales de materias de 3 cuatrimestres previos
-        return verificarFinalesCuatrimestresPrevios(materia, 3);
+
+        // 2. Verificar finales de materias de 3 cuatrimestres previos SOLO si hay suficientes cuatrimestres
+        int cuatriActual = materia.getCuatrimestre();
+        if (cuatriActual > 3) { // Solo verificar si hay al menos 3 cuatrimestres previos
+            return verificarFinalesCuatrimestresPrevios(materia, 3);
+        }
+        return true; // Si no hay suficientes cuatrimestres, no se verifica
     }
-    
+
     private boolean verificarPlanE(Materia materia) {
         // 1. Verificar correlativas (igual que Plan B)
         if (!verificarPlanB(materia)) {
             return false;
         }
-        
-        // 2. Verificar finales de materias de 3 cuatrimestres previos
-        return verificarFinalesCuatrimestresPrevios(materia, 3);
+
+        // 2. Verificar finales de materias de 3 cuatrimestres previos SOLO si hay suficientes cuatrimestres
+        int cuatriActual = materia.getCuatrimestre();
+        if (cuatriActual > 3) { // Solo verificar si hay al menos 3 cuatrimestres previos
+            return verificarFinalesCuatrimestresPrevios(materia, 3);
+        }
+        return true; // Si no hay suficientes cuatrimestres, no se verifica
     }
-    
+
     private boolean verificarFinalesCuatrimestresPrevios(Materia materia, int cuatrimestresPrevios) {
         int cuatriActual = materia.getCuatrimestre();
         int inicio = Math.max(1, cuatriActual - cuatrimestresPrevios); // No menor a 1
-        
+
         // Obtener todas las materias de los cuatrimestres previos
         List<Materia> materiasPrevias = new ArrayList<>();
         for (Materia m : alumno.getCarreraInscripta().getMaterias()) {
@@ -591,7 +603,12 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                 materiasPrevias.add(m);
             }
         }
-        
+
+        // Si no hay materias previas, no hay problema
+        if (materiasPrevias.isEmpty()) {
+            return true;
+        }
+
         // Verificar que todas tengan final aprobado
         for (Materia m : materiasPrevias) {
             EstadoInscripcion estado = obtenerEstadoInscripcion(m);
@@ -600,10 +617,10 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     // Método auxiliar para obtener el estado de inscripción de una materia
     private EstadoInscripcion obtenerEstadoInscripcion(Materia materia) {
         for (InscripcionMateria inscripcion : alumno.getInscripciones()) {
