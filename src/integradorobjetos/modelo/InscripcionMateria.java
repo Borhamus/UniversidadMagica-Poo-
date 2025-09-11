@@ -22,6 +22,10 @@ public class InscripcionMateria {
     }
     
     // Métodos
+    public void setEstado(EstadoInscripcion nuevoEstado) {
+        this.estado = nuevoEstado;
+    }
+    
     public void aprobarCursada() {
         this.estado = EstadoInscripcion.CURSADA_APROBADA;
     }

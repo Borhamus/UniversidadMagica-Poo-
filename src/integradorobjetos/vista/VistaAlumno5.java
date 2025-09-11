@@ -9,6 +9,12 @@ import integradorobjetos.modelo.Carrera;
 import integradorobjetos.modelo.EstadoInscripcion;
 import integradorobjetos.modelo.InscripcionMateria;
 import integradorobjetos.modelo.Materia;
+import integradorobjetos.modelo.Plan;
+import integradorobjetos.modelo.Planes.PlanA;
+import integradorobjetos.modelo.Planes.PlanB;
+import integradorobjetos.modelo.Planes.PlanC;
+import integradorobjetos.modelo.Planes.PlanD;
+import integradorobjetos.modelo.Planes.PlanE;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -187,25 +193,22 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         private void filtrarMaterias() {
             this.materiasFiltradas = new ArrayList<>();
             this.seleccionados = new ArrayList<>();
-
             for (Materia materia : materiasOriginales) {
                 EstadoInscripcion estado = obtenerEstadoInscripcion(materia);
 
-                // No mostrar materias aprobadas o con final aprobado
-                if (estado == EstadoInscripcion.CURSADA_APROBADA || 
-                    estado == EstadoInscripcion.FINAL_APROBADO) {
-                    continue;
+                // Excluir materias que ya están en cualquier estado que no permita reinscripción
+                if (estado != null && (
+                    estado == EstadoInscripcion.INSCRIPTO || 
+                    estado == EstadoInscripcion.CURSADA_APROBADA || 
+                    estado == EstadoInscripcion.FINAL_APROBADO ||
+                    estado == EstadoInscripcion.PROMOCIONADO)) {
+                    continue; // Saltar esta materia
                 }
 
                 // Agregar la materia a la lista filtrada
                 materiasFiltradas.add(materia);
-
-                // Inicializar el estado del checkbox
-                if (estado == EstadoInscripcion.INSCRIPTO) {
-                    seleccionados.add(true); // Checkbox marcado si está inscripto
-                } else {
-                    seleccionados.add(false); // Checkbox no marcado en otros casos
-                }
+                // Inicializar el estado del checkbox (siempre falso porque no está inscripto)
+                seleccionados.add(false);
             }
         }
 
@@ -233,15 +236,10 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                     return materia.getCargaHoraria() + " hs";
                 case 4: // Correlativas
                     return obtenerNombresCorrelativas(materia);
-                case 5: // Agregar (checkbox o texto según estado)
-                    if (alumno == null) {
-                        return false; // Sin alumno, checkbox no marcado
-                    }
-                    EstadoInscripcion estado = obtenerEstadoInscripcion(materia);
-                    if (estado == EstadoInscripcion.INSCRIPTO) {
-                        return seleccionados.get(rowIndex); // Checkbox marcado
-                    }
-                    return seleccionados.get(rowIndex); // Checkbox normal
+                case 5: // Agregar (checkbox)
+                    // Como filtramos las materias, todas las que quedan son no inscriptas
+                    // Solo devolvemos el estado del checkbox
+                    return seleccionados.get(rowIndex);
                 default:
                     return null;
             }
@@ -268,11 +266,15 @@ public class VistaAlumno5 extends javax.swing.JPanel {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            // Solo la columna de checkboxes es editable, y solo si no está inscripta
+            // Solo la columna de checkboxes es editable
             if (columnIndex == 5) {
                 if (alumno == null) return false;
-                EstadoInscripcion estado = obtenerEstadoInscripcion(materiasFiltradas.get(rowIndex));
-                return estado != EstadoInscripcion.INSCRIPTO;
+
+                Materia materia = materiasFiltradas.get(rowIndex);
+                EstadoInscripcion estado = obtenerEstadoInscripcion(materia);
+
+                // Solo editable si no está inscripto en ningún estado
+                return estado == null;
             }
             return false;
         }
@@ -434,17 +436,19 @@ public class VistaAlumno5 extends javax.swing.JPanel {
             }
         }
 
-        // Si ya está inscripto, no hacemos nada (el checkbox ya estaba marcado)
+        // Si ya está inscripto, no hacemos nada
         if (estadoActual == EstadoInscripcion.INSCRIPTO) {
             return;
         }
 
-        // Verificar correlativas
-        if (!verificarCorrelativas(materia)) {
+        // Verificar condiciones según el plan de estudios
+        if (!verificarCondicionesPlan(materia)) {
+            // Mensaje de error personalizado según el plan
+            String mensaje = obtenerMensajeErrorPlan(materia);
             JOptionPane.showMessageDialog(
                 this, 
-                "No puedes inscribirte en esta materia porque tienes correlativas pendientes.", 
-                "Correlativas pendientes", 
+                mensaje, 
+                "Condiciones no cumplidas", 
                 JOptionPane.WARNING_MESSAGE
             );
             // Deseleccionar el checkbox
@@ -459,11 +463,9 @@ public class VistaAlumno5 extends javax.swing.JPanel {
             "Confirmar inscripción", 
             JOptionPane.YES_NO_OPTION
         );
-
         if (opcion == JOptionPane.YES_OPTION) {
             // Realizar la inscripción
             alumno.inscribirMateria(materia);
-
             // Mostrar mensaje de éxito
             JOptionPane.showMessageDialog(
                 this, 
@@ -471,7 +473,6 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                 "Inscripción exitosa", 
                 JOptionPane.INFORMATION_MESSAGE
             );
-
             // Actualizar la tabla para reflejar el nuevo estado
             cargarTablaMateriasDeLaCarrera();
         } else {
@@ -479,6 +480,140 @@ public class VistaAlumno5 extends javax.swing.JPanel {
             ((MateriasCarreraTableModel) MateriasDeLaCarrera.getModel()).setSelected(row, false);
         }
     }
+
+    private String obtenerMensajeErrorPlan(Materia materia) {
+        Plan plan = alumno.getCarreraInscripta().getPlanDeEstudio();
+
+        if (plan instanceof PlanA) {
+            return "No puedes inscribirte en esta materia porque no tienes aprobadas las cursadas de todas las correlativas.";
+        } else if (plan instanceof PlanB) {
+            return "No puedes inscribirte en esta materia porque no tienes aprobados los finales de todas las correlativas.";
+        } else if (plan instanceof PlanC) {
+            return "No puedes inscribirte en esta materia porque no cumples con las condiciones del Plan C: " +
+                   "debes tener aprobadas las cursadas de las correlativas y los finales de todas las materias de 5 cuatrimestres previos.";
+        } else if (plan instanceof PlanD) {
+            return "No puedes inscribirte en esta materia porque no cumples con las condiciones del Plan D: " +
+                   "debes tener aprobadas las cursadas de las correlativas y los finales de todas las materias de 3 cuatrimestres previos.";
+        } else if (plan instanceof PlanE) {
+            return "No puedes inscribirte en esta materia porque no cumples con las condiciones del Plan E: " +
+                   "debes tener aprobados los finales de las correlativas y los finales de todas las materias de 3 cuatrimestres previos.";
+        }
+
+        return "No puedes inscribirte en esta materia porque no cumples con las condiciones requeridas.";
+    }
+    
+    private boolean verificarCondicionesPlan(Materia materia) {
+        Carrera carrera = alumno.getCarreraInscripta();
+        Plan plan = carrera.getPlanDeEstudio();
+        
+        // Si la materia no tiene correlativas, solo verificamos condiciones de cuatrimestres previos si aplica
+        boolean tieneCorrelativas = materia.getCorrelativas() != null && !materia.getCorrelativas().isEmpty();
+        
+        // Verificar condiciones según el tipo de plan
+        if (plan instanceof PlanA) {
+            return verificarPlanA(materia);
+        } else if (plan instanceof PlanB) {
+            return verificarPlanB(materia);
+        } else if (plan instanceof PlanC) {
+            return tieneCorrelativas ? verificarPlanC(materia) : true;
+        } else if (plan instanceof PlanD) {
+            return tieneCorrelativas ? verificarPlanD(materia) : true;
+        } else if (plan instanceof PlanE) {
+            return tieneCorrelativas ? verificarPlanE(materia) : true;
+        }
+        
+        return false; // Plan no reconocido
+    }
+    
+    private boolean verificarPlanA(Materia materia) {
+        // Verificar correlativas: CURSADA_APROBADA, FINAL_APROBADO o PROMOCIONADO
+        for (Materia correlativa : materia.getCorrelativas()) {
+            EstadoInscripcion estado = obtenerEstadoInscripcion(correlativa);
+            if (estado != EstadoInscripcion.CURSADA_APROBADA && 
+                estado != EstadoInscripcion.FINAL_APROBADO && 
+                estado != EstadoInscripcion.PROMOCIONADO) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private boolean verificarPlanB(Materia materia) {
+        // Verificar correlativas: FINAL_APROBADO o PROMOCIONADO
+        for (Materia correlativa : materia.getCorrelativas()) {
+            EstadoInscripcion estado = obtenerEstadoInscripcion(correlativa);
+            if (estado != EstadoInscripcion.FINAL_APROBADO && 
+                estado != EstadoInscripcion.PROMOCIONADO) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private boolean verificarPlanC(Materia materia) {
+        // 1. Verificar correlativas (igual que Plan A)
+        if (!verificarPlanA(materia)) {
+            return false;
+        }
+        
+        // 2. Verificar finales de materias de 5 cuatrimestres previos
+        return verificarFinalesCuatrimestresPrevios(materia, 5);
+    }
+    
+    private boolean verificarPlanD(Materia materia) {
+        // 1. Verificar correlativas (igual que Plan A)
+        if (!verificarPlanA(materia)) {
+            return false;
+        }
+        
+        // 2. Verificar finales de materias de 3 cuatrimestres previos
+        return verificarFinalesCuatrimestresPrevios(materia, 3);
+    }
+    
+    private boolean verificarPlanE(Materia materia) {
+        // 1. Verificar correlativas (igual que Plan B)
+        if (!verificarPlanB(materia)) {
+            return false;
+        }
+        
+        // 2. Verificar finales de materias de 3 cuatrimestres previos
+        return verificarFinalesCuatrimestresPrevios(materia, 3);
+    }
+    
+    private boolean verificarFinalesCuatrimestresPrevios(Materia materia, int cuatrimestresPrevios) {
+        int cuatriActual = materia.getCuatrimestre();
+        int inicio = Math.max(1, cuatriActual - cuatrimestresPrevios); // No menor a 1
+        
+        // Obtener todas las materias de los cuatrimestres previos
+        List<Materia> materiasPrevias = new ArrayList<>();
+        for (Materia m : alumno.getCarreraInscripta().getMaterias()) {
+            if (m.getCuatrimestre() >= inicio && m.getCuatrimestre() < cuatriActual) {
+                materiasPrevias.add(m);
+            }
+        }
+        
+        // Verificar que todas tengan final aprobado
+        for (Materia m : materiasPrevias) {
+            EstadoInscripcion estado = obtenerEstadoInscripcion(m);
+            if (estado != EstadoInscripcion.FINAL_APROBADO && 
+                estado != EstadoInscripcion.PROMOCIONADO) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    // Método auxiliar para obtener el estado de inscripción de una materia
+    private EstadoInscripcion obtenerEstadoInscripcion(Materia materia) {
+        for (InscripcionMateria inscripcion : alumno.getInscripciones()) {
+            if (inscripcion.getMateria().equals(materia)) {
+                return inscripcion.getEstado();
+            }
+        }
+        return null; // No está inscripto
+    }
+    
     
     
      /* This method is called from within the constructor to initialize the form.

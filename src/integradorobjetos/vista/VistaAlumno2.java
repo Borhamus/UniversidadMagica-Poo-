@@ -176,18 +176,13 @@ public class VistaAlumno2 extends javax.swing.JPanel {
             if (columnIndex == 2) { // Solo la columna Estado es editable
                 InscripcionMateria inscripcion = inscripciones.get(rowIndex);
                 EstadoInscripcion nuevoEstado = convertirStringToEstado((String) value);
-                
+
                 if (nuevoEstado != null) {
-                    // Validar si el cambio de estado es válido según las reglas
-                    if (validarCambioEstado(inscripcion, nuevoEstado)) {
-                        fireTableCellUpdated(rowIndex, columnIndex);
-                    } else {
-                        JOptionPane.showMessageDialog(VistaAlumno2.this, 
-                            "No se puede cambiar al estado " + convertirEstadoToString(nuevoEstado) + 
-                            " porque no cumple con las condiciones requeridas", 
-                            "Cambio de estado inválido", 
-                            JOptionPane.ERROR_MESSAGE);
-                    }
+                    // Usar el nuevo método setEstado() para cambiar el estado sin restricciones
+                    inscripcion.setEstado(nuevoEstado);
+
+                    // Notificar a la tabla que la celda ha sido actualizada
+                    fireTableCellUpdated(rowIndex, columnIndex);
                 }
             }
         }
