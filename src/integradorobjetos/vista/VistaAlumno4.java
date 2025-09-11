@@ -32,6 +32,12 @@ public class VistaAlumno4 extends javax.swing.JPanel {
     public VistaAlumno4() {
         initComponents();
         
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(InscripcionBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        InscripcionBoton.setFont(Style.FUENTE_NORMAL);
+        
         // Crear el componente del ojo mágico
         OjoMagico ojoMagico = new OjoMagico();
         
@@ -287,8 +293,8 @@ public class VistaAlumno4 extends javax.swing.JPanel {
                     .addComponent(MarcoDeTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(183, 183, 183))
             .addGroup(FondoLayout.createSequentialGroup()
-                .addGap(348, 348, 348)
-                .addComponent(InscripcionBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(330, 330, 330)
+                .addComponent(InscripcionBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         FondoLayout.setVerticalGroup(
@@ -298,9 +304,9 @@ public class VistaAlumno4 extends javax.swing.JPanel {
                 .addComponent(Ojo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(MarcoDeTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
+                .addGap(47, 47, 47)
                 .addComponent(InscripcionBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35))
+                .addGap(36, 36, 36))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

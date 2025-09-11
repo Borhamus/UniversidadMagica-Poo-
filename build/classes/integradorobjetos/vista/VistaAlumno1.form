@@ -67,7 +67,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="CrearAlumnoBoton" min="-2" pref="143" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="EliminarAlumnoBoton" min="-2" pref="143" max="-2" attributes="0"/>
+                                  <Component id="EliminarAlumnoBoton" min="-2" pref="180" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="0" pref="3" max="32767" attributes="0"/>

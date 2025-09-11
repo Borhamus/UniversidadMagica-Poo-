@@ -34,6 +34,14 @@ public class VistaCarrera2 extends javax.swing.JPanel {
      */
     public VistaCarrera2() {
         initComponents();
+        
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(ConfirmarBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        ConfirmarBoton.setFont(Style.FUENTE_NORMAL);
+        
+        
         Fondo.setOpaque(false);
         
         // Crear el componente del ojo mágico

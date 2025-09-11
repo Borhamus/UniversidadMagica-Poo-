@@ -36,6 +36,12 @@ public class VistaAlumno3 extends javax.swing.JPanel {
         initComponents();
         Fondo.setOpaque(false);
         
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(jButton1);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        jButton1.setFont(Style.FUENTE_NORMAL);
+        
         // Establecer dimensiones exactas
         setMaximumSize(new java.awt.Dimension(846, 398));
         setMinimumSize(new java.awt.Dimension(846, 398));

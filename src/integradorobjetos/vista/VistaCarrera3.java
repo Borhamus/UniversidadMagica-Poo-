@@ -45,6 +45,15 @@ public class VistaCarrera3 extends javax.swing.JPanel {
         // Primero inicializamos los componentes
         initComponents();
         
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(CrearMateriaBoton);
+        Style.estiloBotonMagico2(EliminarMateriaBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        CrearMateriaBoton.setFont(Style.FUENTE_NORMAL);
+        EliminarMateriaBoton.setFont(Style.FUENTE_NORMAL);
+        
+        
         // Usamos SwingUtilities para ejecutar las configuraciones después de que el componente sea visible
         SwingUtilities.invokeLater(new Runnable() {
             @Override

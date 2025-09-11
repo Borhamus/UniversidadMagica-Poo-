@@ -39,6 +39,14 @@ public class VistaAlumno2 extends javax.swing.JPanel {
         initComponents();
         Fondo.setOpaque(false);
         
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(InscribirCarreraBoton);
+        Style.estiloBotonMagico2(InscribirMateriaBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        InscribirCarreraBoton.setFont(Style.FUENTE_NORMAL);
+        InscribirMateriaBoton.setFont(Style.FUENTE_NORMAL);
+        
         // Establecer dimensiones exactas
         setMaximumSize(new java.awt.Dimension(846, 398));
         setMinimumSize(new java.awt.Dimension(846, 398));
@@ -452,9 +460,9 @@ public class VistaAlumno2 extends javax.swing.JPanel {
                 .addGap(16, 16, 16)
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addComponent(InscribirCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(InscribirMateriaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(InscribirCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(InscribirMateriaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(MarcoDeTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

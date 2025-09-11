@@ -34,6 +34,12 @@ public class VistaMateria1 extends javax.swing.JPanel {
         this.esModoEdicion = true;
         initComponents();
         
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(GuardarCambiosBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        GuardarCambiosBoton.setFont(Style.FUENTE_NORMAL);
+        
         // Configuraciones adicionales
         configurarPanel();
         

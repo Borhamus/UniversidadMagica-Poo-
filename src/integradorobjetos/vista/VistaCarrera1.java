@@ -37,6 +37,16 @@ public class VistaCarrera1 extends javax.swing.JPanel {
      */
      public VistaCarrera1() {
         initComponents();
+        
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(CrearCarreraBoton);
+        Style.estiloBotonMagico2(EliminarCarreraBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        CrearCarreraBoton.setFont(Style.FUENTE_NORMAL);
+        EliminarCarreraBoton.setFont(Style.FUENTE_NORMAL);
+        
+        
         Fondo.setOpaque(false);
         
         // Crear el componente del ojo mágico
@@ -257,11 +267,10 @@ public class VistaCarrera1 extends javax.swing.JPanel {
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(FondoLayout.createSequentialGroup()
-                        .addGap(0, 30, Short.MAX_VALUE)
-                        .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(CrearCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23)
+                        .addComponent(EliminarCarreraBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                         .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)))
                 .addContainerGap())

@@ -42,6 +42,14 @@ public class VistaAlumno1 extends javax.swing.JPanel {
     public VistaAlumno1() {
         initComponents();
         
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(CrearAlumnoBoton);
+        Style.estiloBotonMagico2(EliminarAlumnoBoton);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        CrearAlumnoBoton.setFont(Style.FUENTE_NORMAL);
+        EliminarAlumnoBoton.setFont(Style.FUENTE_NORMAL);
+        
         // Crear el componente del ojo mágico
         OjoMagico ojoMagico = new OjoMagico();
         
@@ -347,7 +355,7 @@ public class VistaAlumno1 extends javax.swing.JPanel {
                             .addGroup(FondoLayout.createSequentialGroup()
                                 .addComponent(CrearAlumnoBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(EliminarAlumnoBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(EliminarAlumnoBoton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );

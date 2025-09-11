@@ -45,6 +45,13 @@ public class VistaAlumno5 extends javax.swing.JPanel {
     public VistaAlumno5(Alumno alumno)  {
         this.alumno = alumno;
         initComponents();
+        
+        // Aplicar estilo mágico a los botones
+        Style.estiloBotonMagico2(Volver);
+
+        // CAMBIAR LAS FUENTES DE LOS BOTONES
+        Volver.setFont(Style.FUENTE_NORMAL);
+        
         Fondo.setOpaque(false);
 
         // Establecer dimensiones exactas
