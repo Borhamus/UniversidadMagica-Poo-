@@ -173,7 +173,31 @@ public class VistaCarrera3 extends javax.swing.JPanel {
                 }
             }
         });
+        
+        // Después de actualizar, aplicamos el estilo
+        aplicarEstiloTablas();
     }
+    
+    /**
+     * Aplica el estilo mágico a todas las tablas de esta vista
+    */
+    private void aplicarEstiloTablas() {
+        // Aplicar estilo a la tabla principal
+        Style.estiloTablaMagico(jTable1, new Style.TableConfigurador() {
+            @Override
+            public void configurar(JTable tabla) {
+                // Configurar anchos de columna específicos para esta tabla
+                tabla.getColumnModel().getColumn(0).setPreferredWidth(250); // Nombre Materia
+                tabla.getColumnModel().getColumn(1).setPreferredWidth(40); // Cuatrimestre
+                tabla.getColumnModel().getColumn(2).setPreferredWidth(50); // EsOpcional
+                tabla.getColumnModel().getColumn(3).setPreferredWidth(40); // Carga Horaria
+                tabla.getColumnModel().getColumn(4).setPreferredWidth(250); // Correlativa
+                tabla.getColumnModel().getColumn(5).setPreferredWidth(40); // Editar
+                
+                
+            }
+        });}
+    
     
     // Modelo de tabla para las materias de la carrera
     class MateriasCarreraTableModel extends AbstractTableModel {

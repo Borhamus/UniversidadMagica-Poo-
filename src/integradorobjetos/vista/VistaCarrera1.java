@@ -165,7 +165,23 @@ public class VistaCarrera1 extends javax.swing.JPanel {
                 return c;
             }
         });
+        
+        // Después de actualizar, aplicamos el estilo
+        aplicarEstiloTablas();
     }
+    
+    /**
+     * Aplica el estilo mágico a todas las tablas de esta vista
+    */
+    private void aplicarEstiloTablas() {
+        // Aplicar estilo a la tabla principal
+        Style.estiloTablaMagico(jTable1, new Style.TableConfigurador() {
+            @Override
+            public void configurar(JTable tabla) {
+                // Configurar anchos de columna específicos para esta tabla
+                tabla.getColumnModel().getColumn(0).setPreferredWidth(250); // Nombre de Carreras
+            }
+        });}
     
     
     /**

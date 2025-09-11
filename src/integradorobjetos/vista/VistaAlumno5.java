@@ -72,7 +72,7 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         Ojo.add(ojoMagico, BorderLayout.CENTER); // Añadir el ojo mágico
 
         // IMPORTANTE: Establecer un tamaño preferido para el panel Ojo
-        Ojo.setPreferredSize(new Dimension(200, 40)); // Alto de 100px para que se vea el ojo
+        Ojo.setPreferredSize(new Dimension(110, 40)); // Alto de 100px para que se vea el ojo
 
         // Cargar datos del alumno
         cargarDatosAlumno();
@@ -171,7 +171,28 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                 }
             });
         }
+        // Después de actualizar, aplicamos el estilo
+        aplicarEstiloTablas();
     }
+    
+    /**
+     * Aplica el estilo mágico a todas las tablas de esta vista
+    */
+    private void aplicarEstiloTablas() {
+        // Aplicar estilo a la tabla principal
+        Style.estiloTablaMagico(MateriasDeLaCarrera, new Style.TableConfigurador() {
+            @Override
+            public void configurar(JTable tabla) {
+                // Configurar anchos de columna específicos para esta tabla
+                tabla.getColumnModel().getColumn(0).setPreferredWidth(150); // Nombre de Materia
+                tabla.getColumnModel().getColumn(1).setPreferredWidth(40);  // Cuatrimestre
+                tabla.getColumnModel().getColumn(2).setPreferredWidth(40);  // EsOptativa
+                tabla.getColumnModel().getColumn(3).setPreferredWidth(40);  // CargaHoraria
+                tabla.getColumnModel().getColumn(4).setPreferredWidth(200); // Correlativa
+                tabla.getColumnModel().getColumn(5).setPreferredWidth(30);  // Editar
+                
+            }
+        });}
     
     // Modelo de tabla para las materias de la carrera
     class MateriasCarreraTableModel extends AbstractTableModel {
@@ -715,7 +736,7 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         Ojo.setLayout(OjoLayout);
         OjoLayout.setHorizontalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
+            .addGap(0, 110, Short.MAX_VALUE)
         );
         OjoLayout.setVerticalGroup(
             OjoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -737,12 +758,13 @@ public class VistaAlumno5 extends javax.swing.JPanel {
             .addGroup(FondoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(MarcoDeTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FondoLayout.createSequentialGroup()
-                        .addComponent(Volver, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Volver, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(399, 399, 399))
+                    .addComponent(MarcoDeTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         FondoLayout.setVerticalGroup(
@@ -751,11 +773,11 @@ public class VistaAlumno5 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(MarcoDeTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Volver, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(FondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Ojo, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Volver, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -772,7 +794,7 @@ public class VistaAlumno5 extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 399, Short.MAX_VALUE)
+            .addGap(0, 402, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)

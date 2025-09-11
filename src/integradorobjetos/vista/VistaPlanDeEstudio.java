@@ -94,8 +94,26 @@ public class VistaPlanDeEstudio extends javax.swing.JPanel {
         // Asignar el modelo a la tabla
         jTable1.setModel(modelo);
         
+        // Después de actualizar, aplicamos el estilo
+        aplicarEstiloTablas();
+        
     }
 
+    /**
+     * Aplica el estilo mágico a todas las tablas de esta vista
+    */
+    private void aplicarEstiloTablas() {
+        // Aplicar estilo a la tabla principal
+        Style.estiloTablaMagico(jTable1, new Style.TableConfigurador() {
+            @Override
+            public void configurar(JTable tabla) {
+                // Configurar anchos de columna específicos para esta tabla
+                tabla.getColumnModel().getColumn(0).setPreferredWidth(50); // Plan de Estudio
+                tabla.getColumnModel().getColumn(1).setPreferredWidth(250); // Contenido
+                
+                
+            }
+        });}
 
     
     /**

@@ -180,6 +180,9 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         }
         
         modeloTabla.actualizarDatos(alumnosFiltrados);
+        
+        // Después de actualizar, aplicamos el estilo
+        aplicarEstiloTablas();
     }
     
     class AlumnoTableModel extends AbstractTableModel {
@@ -238,6 +241,24 @@ public class VistaAlumno1 extends javax.swing.JPanel {
         }
     }
     
+    /**
+     * Aplica el estilo mágico a todas las tablas de esta vista
+     */
+    private void aplicarEstiloTablas() {
+        // Aplicar estilo a la tabla principal
+        Style.estiloTablaMagico(TablaContenido, new Style.TableConfigurador() {
+            @Override
+            public void configurar(JTable tabla) {
+                // Configurar anchos de columna específicos para esta tabla
+                tabla.getColumnModel().getColumn(0).setPreferredWidth(150); // Nombre
+                tabla.getColumnModel().getColumn(1).setPreferredWidth(120); // DNI
+                tabla.getColumnModel().getColumn(2).setPreferredWidth(200); // Carrera
+                tabla.getColumnModel().getColumn(3).setPreferredWidth(40); // Estado
+                tabla.getColumnModel().getColumn(4).setPreferredWidth(40); // Ver
+                // ... más configuraciones según sea necesario
+            }
+        });}
+        
     
     /**
      * This method is called from within the constructor to initialize the form.
