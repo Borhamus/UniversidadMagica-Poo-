@@ -56,7 +56,6 @@ public class VistaMateria1 extends javax.swing.JPanel {
         inicializarCamposVacios();
     }
     
-    
     private void configurarPanel() {
         Fondo.setOpaque(false);
         
@@ -178,6 +177,34 @@ public class VistaMateria1 extends javax.swing.JPanel {
         if (ListaDeMaterias.getSelectedIndex() != -1) {
             // Mover de ListaDeMaterias a ListaDeCorrelativas
             String materiaSeleccionada = ListaDeMaterias.getSelectedItem();
+            Materia correlativa = buscarMateriaPorNombre(materiaSeleccionada);
+            
+            // Obtener el cuatrimestre de la materia actual
+            int cuatrimestreActual;
+            if (esModoEdicion) {
+                cuatrimestreActual = materia.getCuatrimestre();
+            } else {
+                try {
+                    cuatrimestreActual = Integer.parseInt(Cuatrimestre.getText());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, 
+                        "El cuatrimestre debe ser un número válido", 
+                        "Error de validación", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
+            // Validar que la correlativa sea de un cuatrimestre anterior
+            if (!validarCorrelativaPorCuatrimestre(cuatrimestreActual, correlativa)) {
+                JOptionPane.showMessageDialog(this, 
+                    "No se puede agregar como correlativa una materia de un cuatrimestre igual o posterior", 
+                    "Correlativa inválida", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Si es válida, agregarla a la lista de correlativas
             ListaDeCorrelativas.add(materiaSeleccionada);
             ListaDeMaterias.remove(materiaSeleccionada);
         } 
@@ -189,7 +216,6 @@ public class VistaMateria1 extends javax.swing.JPanel {
             ListaDeCorrelativas.remove(correlativaSeleccionada);
         }
     }
-    
     
     private void actualizarMateriaExistente() {
         // Actualizar los datos de la materia con los valores de los campos
@@ -209,7 +235,8 @@ public class VistaMateria1 extends javax.swing.JPanel {
         materia.setContenido(Contenido.getText());
         
         try {
-            materia.setCuatrimestre(Integer.parseInt(Cuatrimestre.getText()));
+            int nuevoCuatrimestre = Integer.parseInt(Cuatrimestre.getText());
+            materia.setCuatrimestre(nuevoCuatrimestre);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, 
                 "El cuatrimestre debe ser un número válido", 
@@ -222,12 +249,16 @@ public class VistaMateria1 extends javax.swing.JPanel {
         boolean esOptativa = Si.isSelected();
         materia.setOptativa(esOptativa);
         
+        // Validar correlativas antes de actualizar
+        if (!validarTodasCorrelativas(materia)) {
+            return;
+        }
+        
         // Actualizar correlativas
         // Primero, limpiar la lista actual de correlativas
         materia.getCorrelativas().clear();
         
         // Luego, agregar las correlativas de la lista
-        Facultad facultad = Facultad.getInstance();
         for (int i = 0; i < ListaDeCorrelativas.getItemCount(); i++) {
             String nombreCorrelativa = ListaDeCorrelativas.getItem(i);
             Materia correlativa = buscarMateriaPorNombre(nombreCorrelativa);
@@ -290,6 +321,11 @@ public class VistaMateria1 extends javax.swing.JPanel {
             Materia nuevaMateria = carrera.crearMateria(nombre, contenido, cargaHoraria, cuatrimestre, profesor);
             nuevaMateria.setOptativa(esOptativa);
             
+            // Validar correlativas antes de agregarlas
+            if (!validarTodasCorrelativas(nuevaMateria)) {
+                return;
+            }
+            
             // Agregar correlativas
             for (int i = 0; i < ListaDeCorrelativas.getItemCount(); i++) {
                 String nombreCorrelativa = ListaDeCorrelativas.getItem(i);
@@ -330,11 +366,61 @@ public class VistaMateria1 extends javax.swing.JPanel {
         }
         return null;
     }
-                                    
-                                                          
+    
+    /**
+     * Valida que una materia pueda ser correlativa de otra según el cuatrimestre
+     * @param materiaActual La materia a la que se quiere agregar la correlativa
+     * @param correlativa La materia que se quiere agregar como correlativa
+     * @return true si es válida, false si no lo es
+     */
+    private boolean validarCorrelativaPorCuatrimestre(int cuatrimestreActual, Materia correlativa) {
+        // Si la materia actual es del cuatrimestre 1, no puede tener correlativas
+        if (cuatrimestreActual == 1) {
+            return false;
+        }
+        
+        // La correlativa debe ser de un cuatrimestre anterior
+        return correlativa.getCuatrimestre() < cuatrimestreActual;
+    }
+    
+    /**
+     * Valida todas las correlativas de la lista actual
+     * @param materiaActual La materia a la que pertenecen las correlativas
+     * @return true si todas son válidas, false si alguna no lo es
+     */
+    private boolean validarTodasCorrelativas(Materia materiaActual) {
+        // Si la materia actual es del cuatrimestre 1, no puede tener correlativas
+        if (materiaActual.getCuatrimestre() == 1) {
+            if (ListaDeCorrelativas.getItemCount() > 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "Una materia del primer cuatrimestre no puede tener correlativas", 
+                    "Correlativas inválidas", 
+                    JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+        
+        // Verificar cada correlativa
+        for (int i = 0; i < ListaDeCorrelativas.getItemCount(); i++) {
+            String nombreCorrelativa = ListaDeCorrelativas.getItem(i);
+            Materia correlativa = buscarMateriaPorNombre(nombreCorrelativa);
+            
+            if (correlativa != null && !validarCorrelativaPorCuatrimestre(materiaActual.getCuatrimestre(), correlativa)) {
+                JOptionPane.showMessageDialog(this, 
+                    "La materia '" + nombreCorrelativa + "' no puede ser correlativa porque es de un cuatrimestre igual o posterior", 
+                    "Correlativa inválida", 
+                    JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
 
 
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
